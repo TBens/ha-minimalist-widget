@@ -1,0 +1,105 @@
+# ====================================
+# 📱 HA Minimalist Widget - Configuration
+# ====================================
+# Copiez cette configuration dans votre configuration.yaml
+# Adaptez les noms d'entités selon votre installation
+
+# ====================================
+# 📝 Sensor: Tâches du jour
+# ====================================
+# Compte uniquement les tâches à faire aujourd'hui
+# (inclut les tâches du jour + en retard + sans date)
+
+template:
+  - trigger:
+      - platform: time_pattern
+        minutes: "/10"
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: event_template_reloaded
+      - platform: state
+        entity_id: todo.votre_liste_taches  # ← À ADAPTER
+    action:
+      - service: todo.get_items
+        target:
+          entity_id: todo.votre_liste_taches  # ← À ADAPTER
+        data:
+          status: needs_action
+        response_variable: tasks_data
+    sensor:
+      - name: "Tâches aujourd'hui"
+        unique_id: "tasks_today_count"
+        icon: mdi:checkbox-marked-circle-outline
+        state: >-
+          {% set tasks = tasks_data['todo.votre_liste_taches']['items'] if 'todo.votre_liste_taches' in tasks_data else [] %}
+          {% set today = now().date() | string %}
+          {% set count = namespace(value=0) %}
+          {% for task in tasks %}
+            {% if task.due is not defined or task.due is none or task.due <= today %}
+              {% set count.value = count.value + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ count.value }}
+
+# ====================================
+# 📅 Sensor: Événements restants du jour
+# ====================================
+# Compte les événements à venir (depuis maintenant jusqu'à minuit)
+
+  - trigger:
+      - platform: time_pattern
+        minutes: "/10"
+      - platform: event
+        event_type: event_template_reloaded
+    action:
+      - service: calendar.get_events
+        target:
+          entity_id:
+            - calendar.votre_calendrier_1  # ← À ADAPTER
+            - calendar.votre_calendrier_2  # ← À ADAPTER (optionnel)
+        data:
+          start_date_time: "{{ now() }}"
+          end_date_time: "{{ today_at('23:59:59') }}"
+        response_variable: agenda
+    sensor:
+      - name: "Events Today"
+        unique_id: "events_today_remaining"
+        icon: mdi:calendar-clock
+        state: >-
+          {% set ag = agenda | default({}, true) %}
+          {% set ev1 = ag['calendar.votre_calendrier_1']['events'] if 'calendar.votre_calendrier_1' in ag else [] %}
+          {% set ev2 = ag['calendar.votre_calendrier_2']['events'] if 'calendar.votre_calendrier_2' in ag else [] %}
+          {% set ev_all = ev1 + ev2 %}
+          {{ ev_all | length }}
+        attributes:
+          next_event_title: >-
+            {% set ag = agenda | default({}, true) %}
+            {% set ev1 = ag['calendar.votre_calendrier_1']['events'] if 'calendar.votre_calendrier_1' in ag else [] %}
+            {% set ev2 = ag['calendar.votre_calendrier_2']['events'] if 'calendar.votre_calendrier_2' in ag else [] %}
+            {% set ev_all = (ev1 + ev2) | sort(attribute='start') %}
+            {{ (ev_all[0].summary if ev_all|length > 0 else '') }}
+          next_event_time: >-
+            {% set ag = agenda | default({}, true) %}
+            {% set ev1 = ag['calendar.votre_calendrier_1']['events'] if 'calendar.votre_calendrier_1' in ag else [] %}
+            {% set ev2 = ag['calendar.votre_calendrier_2']['events'] if 'calendar.votre_calendrier_2' in ag else [] %}
+            {% set ev_all = (ev1 + ev2) | sort(attribute='start') %}
+            {% if ev_all|length > 0 %}
+              {% set ts = as_timestamp(ev_all[0].start) %}
+              {{ (as_datetime(ts)|as_local).strftime('%H:%M') }}
+            {% else %}
+              {{ '' }}
+            {% endif %}
+
+# ====================================
+# 📋 Entités requises dans le widget
+# ====================================
+# Ces entités doivent exister dans votre Home Assistant.
+# Adaptez les noms selon votre configuration.
+#
+# sensor.taches_aujourd_hui       ← Créé ci-dessus
+# sensor.events_today             ← Créé ci-dessus
+# sensor.votre_duree_sommeil      ← Via Companion App
+# sensor.votre_pas_journee        ← Via Companion App
+# sensor.votre_conso_electrique   ← Via intégration énergie
+# calendar.votre_anniversaires    ← Via intégration calendrier
