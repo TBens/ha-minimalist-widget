@@ -5,7 +5,7 @@ Un widget Android minimaliste pour Home Assistant affichant votre résumé quoti
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-41BDF5?logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Language](https://img.shields.io/badge/Language-Jinja2-red)](https://jinja.palletsprojects.com/)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFDD00?logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/votre_username)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFDD00?logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/tben)
 
 ---
 
@@ -190,10 +190,6 @@ Besoin d'aide ? Plusieurs options :
 ## ☕ Soutenir le projet
 
 Si ce widget vous est utile et que vous souhaitez soutenir son développement, vous pouvez m'offrir un café ! ☕
-
-<a href="https://buymeacoffee.com/votre_username" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50">
-</a>
 
 <a href="https://buymeacoffee.com/tben" target="_blank">
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50">
