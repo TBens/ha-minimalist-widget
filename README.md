@@ -7,15 +7,13 @@
 [![Language](https://img.shields.io/badge/Language-Jinja2-red)](https://jinja.palletsprojects.com/)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFDD00?logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/tben)
 
----
-
 ## 📸 Preview
 
-![Preview](assets/screenshots/illustration.png)
+<p align="center">
+  <img src="assets/screenshots/widget_cover.png" width="80%" />
+</p>
 
-**Inspired by [Joi Planner](https://joi.software/)** - An app that I wanted to recreate with my own Home Assistant data!
-
----
+**Inspired by [Joi Planner](https://joi.software/)** - An excellent app that I wanted to recreate with my own Home Assistant data!
 
 ## ✨ Features
 
@@ -29,9 +27,11 @@
 
 ## 📋 Display Examples
 
-![Preview](assets/screenshots/exemple-affichages.png)
-
----
+<p align="center">
+  <img src="assets/screenshots/widget_morning.png" width="30%" style="padding: 0 12px;" />
+  <img src="assets/screenshots/widget_afternoon.png" width="30%" style="padding: 0 12px;" />
+  <img src="assets/screenshots/widget_evening.png" width="30%" style="padding: 0 12px;" />
+</p>
 
 ## 🚀 Quick Installation
 
@@ -62,25 +62,34 @@ Restart HA or reload templates:
 1. Long press on your Android home screen
 2. Select **Home Assistant** from the widget list
 
-![Widget List](assets/screenshots/step1_widget_list.png)
+<p align="left">
+  <img src="assets/screenshots/step1_widget_list.png" width="30%" />
+</p>
 
 3. Choose **Template** widget
 
-![Template Widget](assets/screenshots/step2_template_widget.png)
+<p align="left">
+  <img src="assets/screenshots/step2_template_widget.png" width="30%" />
+</p>
 
 4. Configure the widget:
 
-![Widget Configuration](assets/screenshots/step3_widget_config.png)
+<p align="left">
+  <img src="assets/screenshots/step3_widget_config.png" width="30%" />
+</p>
 
 - Copy the content of [`config/widget_template.jinja2`](config/widget_template.jinja2)
+- Set **text size to 28**
+- Choose **Transparent** theme
+- Select **White** text color
 - Customize the parameters at the top of the code
 - Check the preview
 
-![Preview](assets/screenshots/step4_preview.png)
+<p align="left">
+  <img src="assets/screenshots/step4_preview.png" width="30%" />
+</p>
 
 5. Save!
-
----
 
 ## 📚 Documentation
 
@@ -89,7 +98,6 @@ Restart HA or reload templates:
 - 🔧 [Troubleshooting](docs/troubleshooting.md)
 - 🚀 [Advanced features](docs/advanced_features.md)
 
----
 
 ## 🗂️ Project Structure
 
@@ -118,7 +126,6 @@ ha-minimalist-widget/
     └── demo.gif                   # Demo animation
 ```
 
----
 
 ## ⚙️ Customization
 
@@ -141,7 +148,6 @@ The widget is fully customizable! Modify the **USER PARAMETERS** section:
 
 **See the [customization documentation](docs/customization.md) for more options.**
 
----
 
 ## ☕ Support the Project
 
@@ -153,7 +159,6 @@ If this widget is useful to you and you want to support its development, you can
 
 Every contribution is appreciated and helps maintain this project! 🙏
 
----
 
 <p align="center">
   Made with ❤️ for the Home Assistant community
