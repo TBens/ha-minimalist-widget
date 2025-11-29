@@ -7,15 +7,13 @@
 [![Language](https://img.shields.io/badge/Language-Jinja2-red)](https://jinja.palletsprojects.com/)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFDD00?logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/tben)
 
-## 📸 Preview
-
-<p align="center">
-  <img src="assets/screenshots/widget_cover.png" width="80%" />
+<p align="left">
+  <img src="assets/screenshots/widget_cover.png" width="100%" />
 </p>
 
 **Inspired by [Joi Planner](https://joi.software/)** - An excellent app that I wanted to recreate with my own Home Assistant data!
 
-## ✨ Features
+## Features
 
 - 🌅 **Contextual messages** - Different messages based on time of day (morning, afternoon, evening, night)
 - 😴 **Sleep duration** - Display sleep time via smartphone integration
@@ -25,15 +23,19 @@
 - 🚶‍♂️ **Daily statistics** - Step count and power consumption
 - 🎨 **Customizable** - Emojis, colors, and data fully configurable
 
-## 📋 Display Examples
+## Display Examples
 
 <p align="center">
-  <img src="assets/screenshots/widget_morning.png" width="30%" style="padding: 0 12px;" />
-  <img src="assets/screenshots/widget_afternoon.png" width="30%" style="padding: 0 12px;" />
-  <img src="assets/screenshots/widget_evening.png" width="30%" style="padding: 0 12px;" />
+  <img src="assets/screenshots/widget_morning.png" width="30%" style="padding: 0 10px;" />
+  <img src="assets/screenshots/widget_afternoon.png" width="30%" style="padding: 0 10px;" />
+  <img src="assets/screenshots/widget_evening.png" width="30%" style="padding: 0 10px;" />
 </p>
 
-## 🚀 Quick Installation
+<p align="center">
+  <i>Morning • Afternoon • Evening</i>
+</p>
+
+## Quick Installation
 
 ### Prerequisites
 
@@ -59,47 +61,40 @@ Restart HA or reload templates:
 
 ### 3. Add the widget
 
-1. Long press on your Android home screen
-2. Select **Home Assistant** from the widget list
+<table>
+<tr>
+<td width="33%" align="center" valign="top">
+<img src="assets/screenshots/step1_widget_list.png" width="100%" />
+<br/>
+<b>1. Widget List</b>
+<br/>
+Long press on home screen and select Home Assistant
+</td>
+<td width="33%" align="center" valign="top">
+<img src="assets/screenshots/step2_template_widget.png" width="100%" />
+<br/>
+<b>2. Choose Template</b>
+<br/>
+Select the Template widget
+</td>
+<td width="33%" align="center" valign="top">
+<img src="assets/screenshots/step3_widget_config.png" width="100%" />
+<br/>
+<b>3. Configure & Save</b>
+<br/>
+Paste code, set size to 28, Transparent theme, White text
+</td>
+</tr>
+</table>
 
-<p align="left">
-  <img src="assets/screenshots/step1_widget_list.png" width="30%" />
-</p>
-
-3. Choose **Template** widget
-
-<p align="left">
-  <img src="assets/screenshots/step2_template_widget.png" width="30%" />
-</p>
-
-4. Configure the widget:
-
-<p align="left">
-  <img src="assets/screenshots/step3_widget_config.png" width="30%" />
-</p>
-
-- Copy the content of [`config/widget_template.jinja2`](config/widget_template.jinja2)
-- Set **text size to 28**
-- Choose **Transparent** theme
-- Select **White** text color
-- Customize the parameters at the top of the code
-- Check the preview
-
-<p align="left">
-  <img src="assets/screenshots/step4_preview.png" width="30%" />
-</p>
-
-5. Save!
-
-## 📚 Documentation
+## Documentation
 
 - 📖 [Detailed installation](docs/installation.md)
 - 🎨 [Customization guide](docs/customization.md)
 - 🔧 [Troubleshooting](docs/troubleshooting.md)
 - 🚀 [Advanced features](docs/advanced_features.md)
 
-
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 ha-minimalist-widget/
@@ -126,8 +121,7 @@ ha-minimalist-widget/
     └── demo.gif                   # Demo animation
 ```
 
-
-## ⚙️ Customization
+## Customization
 
 The widget is fully customizable! Modify the **USER PARAMETERS** section:
 
@@ -148,8 +142,7 @@ The widget is fully customizable! Modify the **USER PARAMETERS** section:
 
 **See the [customization documentation](docs/customization.md) for more options.**
 
-
-## ☕ Support the Project
+## Support the Project
 
 If this widget is useful to you and you want to support its development, you can buy me a coffee! ☕
 
@@ -157,8 +150,7 @@ If this widget is useful to you and you want to support its development, you can
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50">
 </a>
 
-Every contribution is appreciated and helps maintain this project! 🙏
-
+---
 
 <p align="center">
   Made with ❤️ for the Home Assistant community
