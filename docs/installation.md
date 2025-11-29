@@ -1,180 +1,192 @@
-# 📖 Guide d'installation détaillé
+# 📖 Detailed Installation Guide
 
-Ce guide vous accompagne pas à pas pour installer le widget minimaliste sur votre Home Assistant.
+This guide will walk you through installing the minimalist widget on your Home Assistant step by step.
 
 ---
 
-## 📋 Prérequis
+## 📋 Prerequisites
 
-Avant de commencer, assurez-vous d'avoir :
+Before starting, make sure you have:
 
 ### Home Assistant
-- ✅ Home Assistant installé et fonctionnel
-- ✅ Accès aux fichiers de configuration (via File Editor, SSH, ou Samba)
-- ✅ Application Home Assistant installée sur Android
+- ✅ Home Assistant installed and running
+- ✅ Access to configuration files (via File Editor, SSH, or Samba)
+- ✅ Home Assistant app installed on Android
 
-### Intégrations requises
-- 📅 **Calendrier** : Google Calendar, CalDAV, ou autre
-- ✅ **Todo** : Google Tasks, Todoist, ou autre
-- 📱 **Companion App** : Pour les données de sommeil et de pas
-- ⚡ **Énergie** (optionnel) : Pour la consommation électrique
-
----
-
-## 🚀 Installation étape par étape
-
-### Étape 1 : Vérifier vos entités
-
-Avant d'installer le widget, identifiez vos entités existantes dans Home Assistant.
-
-**1.1 Ouvrez Outils de développement > États**
-
-**1.2 Cherchez vos entités :**
-- 📅 **Calendrier(s)** : `calendar.mon_calendrier`
-- ✅ **Todo** : `todo.ma_liste`
-- 😴 **Sommeil** : `sensor.nom_duree_sommeil`
-- 🚶‍♂️ **Pas** : `sensor.nom_pas_journee`
-- ⚡ **Énergie** : `sensor.nom_consommation`
-
-**💡 Astuce :** Notez ces noms, vous en aurez besoin !
+### Required Integrations
+- 📅 **Calendar**: Google Calendar, CalDAV, or other
+- ✅ **Todo**: Google Tasks, Todoist, or other
+- 📱 **Companion App**: For sleep and step data
+- ⚡ **Energy** (optional): For power consumption
 
 ---
 
-### Étape 2 : Configurer les sensors
+## 🚀 Step-by-Step Installation
 
-Les sensors permettent de compter automatiquement vos tâches et événements.
+### Step 1: Identify Your Entities
 
-**2.1 Ouvrir votre configuration.yaml**
+Before installing the widget, identify your existing entities in Home Assistant.
 
-Via :
+**1.1 Open Developer Tools > States**
+
+**1.2 Find your entities:**
+- 📅 **Calendar(s)**: `calendar.my_calendar`
+- ✅ **Todo**: `todo.my_list`
+- 😴 **Sleep**: `sensor.name_sleep_duration`
+- 🚶‍♂️ **Steps**: `sensor.name_daily_steps`
+- ⚡ **Energy**: `sensor.name_consumption`
+
+**💡 Tip:** Note these names, you'll need them!
+
+---
+
+### Step 2: Configure Sensors
+
+Sensors automatically count your tasks and events.
+
+**2.1 Open your configuration.yaml**
+
+Via:
 - File Editor (addon)
 - SSH / Terminal
 - Samba Share
-- VS Code (avec addon)
+- VS Code (with addon)
 
-**2.2 Ajouter les sensors**
+**2.2 Add sensors**
 
-Copiez le contenu de [`config/configuration_example.yaml`](../config/configuration_example.yaml) à la fin de votre `configuration.yaml`.
+Copy the content of [`config/configuration_example.yaml`](../config/configuration_example.yaml) to the end of your `configuration.yaml`.
 
-**2.3 Adapter les noms d'entités**
+**2.3 Adapt entity names**
 
-Remplacez les zones marquées **"À ADAPTER"** :
+Replace zones marked **"ADAPT THIS"**:
 
 ```yaml
-# ❌ AVANT (exemple)
-entity_id: todo.votre_liste_taches
+# ❌ BEFORE (example)
+entity_id: todo.your_task_list
 
-# ✅ APRÈS (vos vraies entités)
+# ✅ AFTER (your real entities)
 entity_id: todo.thomas
 ```
 
-**Entités à adapter :**
-- `todo.votre_liste_taches` → Votre entité todo
-- `calendar.votre_calendrier_1` → Votre calendrier principal
-- `calendar.votre_calendrier_2` → Votre 2ème calendrier (optionnel)
+**Entities to adapt:**
+- `todo.your_task_list` → Your todo entity
+- `calendar.your_calendar_1` → Your main calendar
+- `calendar.your_calendar_2` → Your 2nd calendar (optional)
 
-**2.4 Sauvegarder le fichier**
-
----
-
-### Étape 3 : Redémarrer Home Assistant
-
-**Option 1 : Redémarrage complet** (recommandé)
-- Paramètres > Système > Redémarrer
-
-**Option 2 : Recharger les templates uniquement**
-- Outils de développement > YAML > Recharger les entités de template
-
-⏱️ Attendez 1-2 minutes après le redémarrage.
+**2.4 Save the file**
 
 ---
 
-### Étape 4 : Vérifier les sensors
+### Step 3: Restart Home Assistant
 
-**4.1 Ouvrez Outils de développement > États**
+**Option 1: Full restart** (recommended)
+- Settings > System > Restart
 
-**4.2 Cherchez vos nouveaux sensors :**
+**Option 2: Reload templates only**
+- Developer Tools > YAML > Reload template entities
+
+⏱️ Wait 1-2 minutes after restart.
+
+---
+
+### Step 4: Verify Sensors
+
+**4.1 Open Developer Tools > States**
+
+**4.2 Find your new sensors:**
 - `sensor.taches_aujourd_hui` ✅
 - `sensor.events_today` ✅
 
-**4.3 Vérifiez les valeurs**
+**4.3 Check values**
 
-Cliquez sur chaque sensor pour voir :
-- **État** : Le nombre affiché (ex: `3`)
-- **Attributs** : Informations supplémentaires
+Click on each sensor to see:
+- **State**: The displayed number (e.g., `3`)
+- **Attributes**: Additional information
 
-**❌ Les sensors n'apparaissent pas ?**
-→ Consultez [Troubleshooting](troubleshooting.md)
+**❌ Sensors don't appear?**
+→ Check [Troubleshooting](troubleshooting.md)
 
 ---
 
-### Étape 5 : Configurer le widget Android
+### Step 5: Configure Android Widget
 
-**5.1 Sur votre téléphone Android**
+**5.1 On your Android phone**
 
-1. Long press sur l'écran d'accueil
-2. Appuyez sur **Widgets**
-3. Scroll jusqu'à **Home Assistant**
-4. Faites glisser **Template** sur votre écran
+1. Long press on home screen
+2. Tap **Widgets**
+3. Scroll to **Home Assistant**
 
-**5.2 Configurer le widget**
+![Widget List](../assets/screenshots/step1_widget_list.png)
 
-1. **Nom** : Donnez un nom (ex: "Mon jour")
-2. **Template** : Copiez le contenu de [`config/widget_template.jinja2`](../config/widget_template.jinja2)
-3. **Aperçu** : Vérifiez l'affichage en bas
-4. **Sauvegarder**
+4. Look for the **Template** widget (description: "Widget de modèle 2 x 1 - Rendu de n'importe quel modèle avec une mise en forme HTML")
 
-**5.3 Personnaliser le template**
+![Template Widget](../assets/screenshots/step2_template_widget.png)
 
-Dans la section **USER PARAMETERS** du template :
+5. Drag **Template** to your screen
+
+**5.2 Configure widget**
+
+![Widget Configuration](../assets/screenshots/step3_widget_config.png)
+
+1. **Template field** ("Saisir le modèle ici"): Copy content of [`config/widget_template.jinja2`](../config/widget_template.jinja2)
+2. **Widget text size**: Adjust to your preference (default: 28)
+3. **Widget theme**: Choose Transparent, Light, or Dark
+4. **Widget text color**: White or Black
+5. **Preview**: Check display at top of screen
+
+![Widget Preview](../assets/screenshots/step4_preview.png)
+
+**5.3 Customize template**
+
+In the **USER PARAMETERS** section of the template:
 
 ```jinja2
-{% set NAME = 'Thomas' %}          # ← Votre prénom
-{% set COLOR = '#5b5b5b' %}        # ← Couleur du texte
-{% set CURRENCY = '€' %}           # ← Devise
+{% set NAME = 'Thomas' %}          # ← Your first name
+{% set COLOR = '#5b5b5b' %}        # ← Text color
+{% set CURRENCY = '€' %}           # ← Currency
 
 {% set ENTITIES = {
   'tasks': 'sensor.taches_aujourd_hui',
-  'steps': 'sensor.VOTRE_pas_journee',        # ← À ADAPTER
-  'conso': 'sensor.VOTRE_conso_electrique',   # ← À ADAPTER
-  'sleep': 'sensor.VOTRE_duree_sommeil'       # ← À ADAPTER
+  'steps': 'sensor.YOUR_daily_steps',        # ← ADAPT THIS
+  'conso': 'sensor.YOUR_power_consumption',  # ← ADAPT THIS
+  'sleep': 'sensor.YOUR_sleep_duration'      # ← ADAPT THIS
 } %}
 
 {% set BIRTHDAYS = [
-  'calendar.VOTRE_anniversaires'  # ← À ADAPTER (optionnel)
+  'calendar.YOUR_birthdays'  # ← ADAPT THIS (optional)
 ] %}
 ```
 
-**5.4 Sauvegarder**
+**5.4 Save** ("AJOUTER UN WIDGET" / "METTRE À JOUR LE WIDGET")
 
 ---
 
-## ✅ Vérification finale
+## ✅ Final Verification
 
-Votre widget devrait maintenant afficher :
+Your widget should now display:
 
-**Le matin (5h-12h) :**
-> Bonjour [Nom], tu as dormi 🌈 7h 34, tu as 📅 2 événements et ☑️ 3 tâches aujourd'hui
+**Morning (5am-12pm):**
+> Bonjour [Name], tu as dormi 🌈 7h 34, tu as 📅 2 évènements et ☑️ 3 tâches aujourd'hui
 >
 > 🚶‍♂️ 124 pas  ⚡ 0.50€
 
-**L'après-midi (12h-17h) :**
-> Bon après-midi [Nom], tu as 📅 1 événement et ☑️ 2 tâches aujourd'hui
+**Afternoon (12pm-5pm):**
+> Bon après-midi [Name], tu as 📅 1 évènement et ☑️ 2 tâches aujourd'hui
 >
 > 🚶‍♂️ 5 432 pas  ⚡ 1.24€
 
 ---
 
-## 🎨 Prochaines étapes
+## 🎨 Next Steps
 
-- 📚 [Personnaliser votre widget](customization.md)
-- 🚀 [Fonctionnalités avancées](advanced_features.md)
-- 🐛 [Résolution de problèmes](troubleshooting.md)
+- 📚 [Customize your widget](customization.md)
+- 🚀 [Advanced features](advanced_features.md)
+- 🐛 [Troubleshooting](troubleshooting.md)
 
 ---
 
-## 💬 Besoin d'aide ?
+## 💬 Need Help?
 
-- 🐛 [Ouvrez une issue](../../issues)
-- 💬 [Forum Home Assistant](https://community.home-assistant.io/)
-- 📖 [Retour au README](../README.md)
+- 🐛 [Open an issue](../../issues)
+- 💬 [Home Assistant Forum](https://community.home-assistant.io/)
+- 📖 [Back to README](../README.md)

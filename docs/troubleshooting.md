@@ -1,29 +1,29 @@
-# 🔧 Guide de dépannage
+# 🔧 Troubleshooting Guide
 
-Résolvez les problèmes les plus courants avec votre widget.
+Solve the most common problems with your widget.
 
 ---
 
-## 🚫 Les sensors n'apparaissent pas
+## 🚫 Sensors Don't Appear
 
-### Symptôme
-Après le redémarrage de HA, `sensor.taches_aujourd_hui` et/ou `sensor.events_today` n'apparaissent pas dans **Outils de développement > États**.
+### Symptom
+After HA restart, `sensor.taches_aujourd_hui` and/or `sensor.events_today` don't appear in **Developer Tools > States**.
 
 ### Solutions
 
-**1. Vérifier les erreurs de configuration**
+**1. Check configuration errors**
 
-- Ouvrez **Paramètres > Système > Journaux**
-- Cherchez des erreurs contenant "template" ou "sensor"
-- Les erreurs courantes :
-  - Indentation incorrecte (YAML)
-  - Guillemets manquants
-  - Entité inexistante
+- Open **Settings > System > Logs**
+- Look for errors containing "template" or "sensor"
+- Common errors:
+  - Incorrect indentation (YAML)
+  - Missing quotes
+  - Non-existent entity
 
-**2. Vérifier l'indentation YAML**
+**2. Check YAML indentation**
 
 ```yaml
-# ❌ INCORRECT (mauvaise indentation)
+# ❌ INCORRECT (wrong indentation)
 template:
 - trigger:
   - platform: time_pattern
@@ -34,190 +34,190 @@ template:
       - platform: time_pattern
 ```
 
-**3. Vérifier que les entités existent**
+**3. Check that entities exist**
 
 ```yaml
-entity_id: todo.ma_liste  # ← Cette entité doit exister !
+entity_id: todo.my_list  # ← This entity must exist!
 ```
 
-- Allez dans **Outils de développement > États**
-- Cherchez `todo.ma_liste`
-- Si elle n'existe pas, corrigez le nom
+- Go to **Developer Tools > States**
+- Search for `todo.my_list`
+- If it doesn't exist, fix the name
 
-**4. Recharger les templates**
+**4. Reload templates**
 
-- **Outils de développement > YAML**
-- **Recharger les entités de template**
-- Attendez 30 secondes
-- Vérifiez à nouveau
+- **Developer Tools > YAML**
+- **Reload template entities**
+- Wait 30 seconds
+- Check again
 
 ---
 
-## ⚠️ Le widget affiche "Indisponible"
+## ⚠️ Widget Displays "Unavailable"
 
-### Symptôme
-Le widget affiche "Indisponible" ou "Unknown" au lieu des données.
+### Symptom
+Widget displays "Unavailable" or "Unknown" instead of data.
 
 ### Solutions
 
-**1. Vérifier que les sensors existent**
+**1. Check that sensors exist**
 
-Dans le template du widget, vérifiez les noms :
+In widget template, verify names:
 
 ```jinja2
 {% set ENTITIES = {
-  'tasks': 'sensor.taches_aujourd_hui',  # ← Existe-t-il ?
-  'steps': 'sensor.thomas_pas_journee',  # ← Existe-t-il ?
+  'tasks': 'sensor.taches_aujourd_hui',  # ← Does it exist?
+  'steps': 'sensor.thomas_daily_steps',  # ← Does it exist?
   ...
 } %}
 ```
 
-**2. Tester dans Developer Tools**
+**2. Test in Developer Tools**
 
-- **Outils de développement > Template**
-- Testez :
+- **Developer Tools > Template**
+- Test:
 ```jinja2
 {{ states('sensor.taches_aujourd_hui') }}
 ```
-- Si retourne `unknown` ou `unavailable` → Le sensor n'est pas configuré correctement
+- If returns `unknown` or `unavailable` → Sensor not configured correctly
 
-**3. Vérifier les permissions de l'app**
+**3. Check app permissions**
 
-- **Paramètres Android > Apps > Home Assistant**
-- Vérifiez les permissions (localisation, activité physique)
+- **Android Settings > Apps > Home Assistant**
+- Check permissions (location, physical activity)
 
 ---
 
-## 🔄 Le widget ne se met pas à jour
+## 🔄 Widget Doesn't Update
 
-### Symptôme
-Les données affichées ne changent pas, même après plusieurs heures.
+### Symptom
+Displayed data doesn't change, even after several hours.
 
 ### Solutions
 
-**1. Vérifier les triggers des sensors**
+**1. Check sensor triggers**
 
-Les sensors doivent se mettre à jour automatiquement :
+Sensors should update automatically:
 
 ```yaml
 trigger:
   - platform: time_pattern
-    minutes: "/10"  # ← Toutes les 10 minutes
+    minutes: "/10"  # ← Every 10 minutes
 ```
 
-**2. Forcer la mise à jour manuellement**
+**2. Force manual update**
 
-- **Appuyez sur le widget** pour le rafraîchir
-- Ou **Outils de développement > YAML > Recharger les entités de template**
+- **Tap the widget** to refresh it
+- Or **Developer Tools > YAML > Reload template entities**
 
-**3. Vérifier les rate limits**
+**3. Check rate limits**
 
-Si votre template est trop complexe, Home Assistant peut limiter les mises à jour.
+If your template is too complex, Home Assistant may limit updates.
 
-**Solution :**
-- Simplifiez le template
-- Augmentez l'intervalle de mise à jour (`minutes: "/15"` au lieu de `"/10"`)
+**Solution:**
+- Simplify template
+- Increase update interval (`minutes: "/15"` instead of `"/10"`)
 
 ---
 
-## ❌ Erreur "template" dans le widget
+## ❌ "Template" Error in Widget
 
-### Symptôme
-Le widget affiche une erreur de template ou ne s'affiche pas du tout.
+### Symptom
+Widget displays template error or doesn't display at all.
 
 ### Solutions
 
-**1. Vérifier la syntaxe Jinja2**
+**1. Check Jinja2 syntax**
 
-Erreurs courantes :
+Common errors:
 ```jinja2
-# ❌ INCORRECT (accolade fermante manquante)
+# ❌ INCORRECT (missing closing brace)
 {{ NAME }
 
 # ✅ CORRECT
 {{ NAME }}
 ```
 
-**2. Tester le template dans Developer Tools**
+**2. Test template in Developer Tools**
 
-- **Outils de développement > Template**
-- Collez votre code complet
-- Identifiez la ligne d'erreur
+- **Developer Tools > Template**
+- Paste your complete code
+- Identify error line
 
-**3. Vérifier les noms d'entités**
+**3. Check entity names**
 
 ```jinja2
 {% set ENTITIES = {
-  'tasks': 'sensor.taches_aujourd_hui',  # ← Vérifiez le nom exact
+  'tasks': 'sensor.taches_aujourd_hui',  # ← Check exact name
   ...
 } %}
 ```
 
 ---
 
-## 🔢 Les nombres ne s'affichent pas correctement
+## 🔢 Numbers Don't Display Correctly
 
-### Symptôme
-- Les pas affichent `0` au lieu du nombre réel
-- La consommation affiche `0.0`
-- Le sommeil affiche `—`
+### Symptom
+- Steps display `0` instead of real number
+- Consumption displays `0.0`
+- Sleep displays `—`
 
 ### Solutions
 
-**1. Vérifier que les sensors existent**
+**1. Check that sensors exist**
 
 ```jinja2
-{{ states('sensor.thomas_pas_journee') }}
+{{ states('sensor.thomas_daily_steps') }}
 ```
 
-**2. Vérifier le type de données**
+**2. Check data type**
 
-Certains sensors retournent du texte au lieu de nombres :
+Some sensors return text instead of numbers:
 
 ```jinja2
-# ❌ Si le sensor retourne "5432 pas"
+# ❌ If sensor returns "5432 steps"
 {% set steps = states(ENTITIES.steps)|int(0) %}  # → 0
 
-# ✅ Solution : extraire le nombre
+# ✅ Solution: extract number
 {% set steps = states(ENTITIES.steps)|regex_findall_index('\\d+') | int(0) %}
 ```
 
-**3. Vérifier les unités**
+**3. Check units**
 
 ```yaml
-# Configuration du sensor
-unit_of_measurement: "pas"  # Parfois nécessaire
+# Sensor configuration
+unit_of_measurement: "steps"  # Sometimes necessary
 ```
 
 ---
 
-## 📅 Les événements ne s'affichent pas
+## 📅 Events Don't Display
 
-### Symptôme
-Le compteur d'événements affiche toujours `0`.
+### Symptom
+Event counter always displays `0`.
 
 ### Solutions
 
-**1. Vérifier l'intégration calendrier**
+**1. Check calendar integration**
 
-- **Paramètres > Appareils et services**
-- Vérifiez que votre calendrier est bien connecté
-- Testez l'accès aux événements
+- **Settings > Devices & Services**
+- Verify calendar is connected
+- Test event access
 
-**2. Vérifier le nom du calendrier**
+**2. Check calendar name**
 
 ```yaml
 entity_id:
-  - calendar.mon_calendrier  # ← Nom exact ?
+  - calendar.my_calendar  # ← Exact name?
 ```
 
-**3. Tester manuellement**
+**3. Test manually**
 
-Dans **Outils de développement > Services** :
+In **Developer Tools > Services**:
 ```yaml
 service: calendar.get_events
 target:
-  entity_id: calendar.mon_calendrier
+  entity_id: calendar.my_calendar
 data:
   start_date_time: "{{ now() }}"
   end_date_time: "{{ today_at('23:59:59') }}"
@@ -225,113 +225,113 @@ data:
 
 ---
 
-## ✅ Les tâches ne se filtrent pas correctement
+## ✅ Tasks Don't Filter Correctly
 
-### Symptôme
-Le compteur affiche toutes les tâches, pas seulement celles du jour.
+### Symptom
+Counter displays all tasks, not just today's.
 
 ### Solutions
 
-**1. Vérifier que les tâches ont des dates**
+**1. Check that tasks have dates**
 
-Dans Google Tasks ou votre app de tâches :
-- Assignez une date aux tâches importantes
-- Les tâches sans date seront comptées
+In Google Tasks or your task app:
+- Assign date to important tasks
+- Tasks without date will be counted
 
-**2. Vérifier le sensor**
+**2. Check sensor**
 
 ```yaml
 {% for task in tasks %}
   {% if task.due is not defined or task.due is none or task.due <= today %}
-    # ← Cette condition filtre les tâches
+    # ← This condition filters tasks
   {% endif %}
 {% endfor %}
 ```
 
-**3. Tester le service manually**
+**3. Test service manually**
 
 ```yaml
 service: todo.get_items
 target:
-  entity_id: todo.ma_liste
+  entity_id: todo.my_list
 data:
   status: needs_action
 ```
 
 ---
 
-## 🎂 Les anniversaires ne s'affichent pas
+## 🎂 Birthdays Don't Display
 
-### Symptôme
-Le widget n'affiche jamais d'anniversaires, même quand il y en a.
+### Symptom
+Widget never displays birthdays, even when there are some.
 
 ### Solutions
 
-**1. Vérifier le calendrier d'anniversaires**
+**1. Check birthday calendar**
 
 ```jinja2
 {% set BIRTHDAYS = [
-  'calendar.anniversaires'  # ← Existe-t-il ?
+  'calendar.birthdays'  # ← Does it exist?
 ] %}
 ```
 
-**2. Vérifier le format des événements**
+**2. Check event format**
 
-Les anniversaires doivent :
-- Être des événements d'une journée entière
-- Avoir un attribut `start_time`
+Birthdays must:
+- Be all-day events
+- Have `start_time` attribute
 
-**3. Désactiver temporairement**
+**3. Temporarily disable**
 
-Si vous n'utilisez pas cette fonctionnalité :
+If you don't use this feature:
 ```jinja2
 {% set BIRTHDAYS = [] %}
 ```
 
 ---
 
-## 🐛 Autres problèmes
+## 🐛 Other Problems
 
-### Le widget est trop lent
+### Widget is Too Slow
 
-**Solutions :**
-- Augmentez l'intervalle de mise à jour des sensors (`minutes: "/15"`)
-- Simplifiez le template
-- Réduisez le nombre de calendriers
+**Solutions:**
+- Increase sensor update interval (`minutes: "/15"`)
+- Simplify template
+- Reduce number of calendars
 
-### Le texte est coupé
+### Text is Cut Off
 
-**Solutions :**
-- Réduisez la taille du texte dans les paramètres du widget
-- Utilisez un widget plus grand (4x2 au lieu de 3x1)
-- Simplifiez les messages
+**Solutions:**
+- Reduce text size in widget settings
+- Use larger widget (4x2 instead of 3x1)
+- Simplify messages
 
-### Les couleurs ne s'affichent pas
+### Colors Don't Display
 
-**Solutions :**
+**Solutions:**
 ```jinja2
-{% set COLOR = '#5b5b5b' %}  # ← Vérifiez le code couleur
+{% set COLOR = '#5b5b5b' %}  # ← Check color code
 ```
 
 ---
 
-## 📞 Toujours besoin d'aide ?
+## 📞 Still Need Help?
 
-Si votre problème persiste :
+If your problem persists:
 
-1. **Vérifiez les logs** de Home Assistant
-2. **Ouvrez une issue** sur GitHub avec :
-   - Votre version de HA
-   - Le code de votre template
-   - Les erreurs dans les logs
-3. **Demandez sur le forum** Home Assistant
+1. **Check logs** in Home Assistant
+2. **Open an issue** on GitHub with:
+   - Your HA version
+   - Your template code
+   - Errors in logs
+3. **Ask on forum** Home Assistant
 
 ---
 
-## 🚀 Ressources utiles
+## 🚀 Useful Resources
 
-- 📖 [Guide d'installation](installation.md)
-- 🎨 [Guide de personnalisation](customization.md)
-- 📚 [Documentation Jinja2](https://jinja.palletsprojects.com/)
-- 💬 [Forum Home Assistant](https://community.home-assistant.io/)
-- 📖 [Retour au README](../README.md)
+- 📖 [Installation guide](installation.md)
+- 🎨 [Customization guide](customization.md)
+- 📚 [Jinja2 Documentation](https://jinja.palletsprojects.com/)
+- 💬 [Home Assistant Forum](https://community.home-assistant.io/)
+- 📖 [Back to README](../README.md)

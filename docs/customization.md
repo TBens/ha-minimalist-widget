@@ -1,78 +1,78 @@
-# 🎨 Guide de personnalisation
+# 🎨 Customization Guide
 
-Personnalisez votre widget pour qu'il corresponde parfaitement à vos besoins !
+Customize your widget to perfectly match your needs!
 
 ---
 
-## 🔧 Paramètres de base
+## 🔧 Basic Parameters
 
-### Modifier votre prénom
+### Change Your Name
 
 ```jinja2
-{% set NAME = 'Thomas' %}  # ← Changez ici
+{% set NAME = 'Thomas' %}  # ← Change here
 ```
 
-**Résultat :**
+**Result:**
 - "Bonjour Thomas" → "Bonjour Marie"
 
 ---
 
-### Changer la couleur du texte
+### Change Text Color
 
 ```jinja2
-{% set COLOR = '#5b5b5b' %}  # ← Code couleur hexadécimal
+{% set COLOR = '#5b5b5b' %}  # ← Hexadecimal color code
 ```
 
-**Exemples de couleurs :**
-- `#5b5b5b` - Gris (défaut)
-- `#888888` - Gris clair
-- `#333333` - Gris foncé
-- `#666666` - Gris moyen
+**Color examples:**
+- `#5b5b5b` - Gray (default)
+- `#888888` - Light gray
+- `#333333` - Dark gray
+- `#666666` - Medium gray
 
-**💡 Astuce :** Testez des couleurs sur [HTML Color Codes](https://htmlcolorcodes.com/)
+**💡 Tip:** Test colors on [HTML Color Codes](https://htmlcolorcodes.com/)
 
 ---
 
-### Changer la devise
+### Change Currency
 
 ```jinja2
-{% set CURRENCY = '€' %}  # ← Symbole de devise
+{% set CURRENCY = '€' %}  # ← Currency symbol
 ```
 
-**Exemples :**
+**Examples:**
 - `€` - Euro
 - `$` - Dollar
-- `£` - Livre
-- `CHF` - Franc suisse
+- `£` - Pound
+- `CHF` - Swiss Franc
 
 ---
 
-### Format d'heure
+### Time Format
 
 ```jinja2
 {% set USE_24H = true %}  # true = 24h, false = 12h (AM/PM)
 ```
 
-**Non utilisé actuellement**, mais prêt pour de futures fonctionnalités (affichage d'heures d'événements).
+**Not currently used**, but ready for future features (displaying event times).
 
 ---
 
-### Séparateur de milliers
+### Thousands Separator
 
 ```jinja2
-{% set SEP = '' %}  # Vide par défaut
+{% set SEP = '' %}  # Empty by default
 ```
 
-**Exemples :**
-- `''` - Pas de séparateur : `12456`
-- `' '` - Espace : `12 456`
-- `','` - Virgule : `12,456`
+**Examples:**
+- `''` - No separator: `12456`
+- `' '` - Space: `12 456`
+- `','` - Comma: `12,456`
 
-**Affecte :** Le nombre de pas affiché
+**Affects:** Step count display
 
 ---
 
-## 😀 Personnaliser les emojis
+## 😀 Customize Emojis
 
 ```jinja2
 {% set EMOJI = {
@@ -86,100 +86,100 @@ Personnalisez votre widget pour qu'il corresponde parfaitement à vos besoins !
 } %}
 ```
 
-### Idées de personnalisation
+### Customization Ideas
 
-**Sommeil :**
-- `🌈` (arc-en-ciel)
-- `😴` (endormi)
+**Sleep:**
+- `🌈` (rainbow)
+- `😴` (sleeping)
 - `💤` (zzz)
-- `🛌` (lit)
+- `🛌` (bed)
 
-**Événements :**
-- `🗓️` (calendrier)
-- `📅` (calendrier alternatif)
-- `📆` (calendrier arraché)
-- `🎯` (cible)
+**Events:**
+- `🗓️` (calendar)
+- `📅` (calendar alt)
+- `📆` (tear-off calendar)
+- `🎯` (target)
 
-**Tâches complètes :**
-- `✅` (coche verte)
-- `✔️` (coche)
-- `🎉` (fête)
-- `👍` (pouce en l'air)
+**Tasks complete:**
+- `✅` (check mark)
+- `✔️` (check)
+- `🎉` (party)
+- `👍` (thumbs up)
 
-**Tâches en cours :**
-- `☑️` (case cochée)
+**Tasks in progress:**
+- `☑️` (checked box)
 - `📝` (note)
-- `⏳` (sablier)
-- `🔨` (marteau)
+- `⏳` (hourglass)
+- `🔨` (hammer)
 
-**Pas :**
-- `🚶‍♂️` (marcheur homme)
-- `🚶‍♀️` (marcheuse femme)
-- `👟` (chaussure)
-- `🏃` (coureur)
+**Steps:**
+- `🚶‍♂️` (man walking)
+- `🚶‍♀️` (woman walking)
+- `👟` (shoe)
+- `🏃` (runner)
 
-**Consommation :**
-- `⚡` (éclair)
-- `🔋` (batterie)
-- `💡` (ampoule)
-- `⚙️` (engrenage)
+**Power:**
+- `⚡` (lightning)
+- `🔋` (battery)
+- `💡` (bulb)
+- `⚙️` (gear)
 
-**Anniversaires :**
-- `🎂` (gâteau)
-- `🎉` (fête)
-- `🎁` (cadeau)
-- `🎈` (ballon)
+**Birthdays:**
+- `🎂` (cake)
+- `🎉` (party)
+- `🎁` (gift)
+- `🎈` (balloon)
 
 ---
 
-## 🏠 Configurer vos entités
+## 🏠 Configure Your Entities
 
-### Entités principales
+### Main Entities
 
 ```jinja2
 {% set ENTITIES = {
   'tasks': 'sensor.taches_aujourd_hui',
-  'steps': 'sensor.votre_pas_journee',
-  'conso': 'sensor.votre_conso_electrique',
-  'sleep': 'sensor.votre_duree_sommeil'
+  'steps': 'sensor.your_daily_steps',
+  'conso': 'sensor.your_power_consumption',
+  'sleep': 'sensor.your_sleep_duration'
 } %}
 ```
 
-**Remplacez** les entités par vos propres sensors :
+**Replace** entities with your own sensors:
 
-1. **Ouvrez** Outils de développement > États
-2. **Cherchez** vos sensors
-3. **Copiez** le nom exact (avec `sensor.`)
-4. **Remplacez** dans le template
-
----
-
-### Calendrier d'anniversaires (optionnel)
-
-```jinja2
-{% set BIRTHDAYS = [
-  'calendar.anniversaires'
-] %}
-```
-
-**Pour désactiver les anniversaires :**
-```jinja2
-{% set BIRTHDAYS = [] %}  # Liste vide
-```
-
-**Pour plusieurs calendriers :**
-```jinja2
-{% set BIRTHDAYS = [
-  'calendar.anniversaires_famille',
-  'calendar.anniversaires_amis'
-] %}
-```
+1. **Open** Developer Tools > States
+2. **Find** your sensors
+3. **Copy** exact name (with `sensor.`)
+4. **Replace** in template
 
 ---
 
-## ⏰ Personnaliser les messages par période
+### Birthday Calendar (optional)
 
-### Heures de transition
+```jinja2
+{% set BIRTHDAYS = [
+  'calendar.birthdays'
+] %}
+```
+
+**To disable birthdays:**
+```jinja2
+{% set BIRTHDAYS = [] %}  # Empty list
+```
+
+**For multiple calendars:**
+```jinja2
+{% set BIRTHDAYS = [
+  'calendar.family_birthdays',
+  'calendar.friends_birthdays'
+] %}
+```
+
+---
+
+## ⏰ Customize Messages by Period
+
+### Transition Hours
 
 ```jinja2
 {# Morning #}
@@ -199,88 +199,88 @@ Personnalisez votre widget pour qu'il corresponde parfaitement à vos besoins !
   ...
 ```
 
-**Modifier les heures :**
-- `5 <= h < 12` → Matin de 5h à 11h59
-- `12 <= h < 17` → Après-midi de 12h à 16h59
-- `17 <= h < 22` → Soirée de 17h à 21h59
-- Sinon → Nuit de 22h à 4h59
+**Modify hours:**
+- `5 <= h < 12` → Morning from 5am to 11:59am
+- `12 <= h < 17` → Afternoon from 12pm to 4:59pm
+- `17 <= h < 22` → Evening from 5pm to 9:59pm
+- Otherwise → Night from 10pm to 4:59am
 
 ---
 
-### Changer les messages
+### Change Messages
 
-**Exemple : Modifier le message du matin**
+**Example: Modify morning message**
 
 ```jinja2
-{# AVANT #}
+{# BEFORE #}
 {{ open }}Bonjour{{ close }} {{ NAME }}, {{ open }}tu as dormi{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}, {{ open }}tu as{{ close }} {{ join_list(items) }} {{ open }}aujourd'hui{{ close }}
 
-{# APRÈS #}
-{{ open }}Hello{{ close }} {{ NAME }}, {{ open }}sommeil :{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}, {{ join_list(items) }} {{ open }}pour aujourd'hui{{ close }}
+{# AFTER #}
+{{ open }}Hello{{ close }} {{ NAME }}, {{ open }}you slept{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}
 ```
 
-**💡 Astuce :** Gardez la structure avec `{{ open }}...{{ close }}` pour maintenir la cohérence des couleurs.
+**💡 Tip:** Keep structure with `{{ open }}...{{ close }}` to maintain color consistency.
 
 ---
 
-## 📊 Masquer des statistiques
+## 📊 Hide Statistics
 
-### Masquer les pas
+### Hide Steps
 
 ```jinja2
-{# AVANT #}
+{# BEFORE #}
 <p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} pas  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
 
-{# APRÈS (pas masqués) #}
+{# AFTER (steps hidden) #}
 <p style="text-align:start"><small>{{ open }}{{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
 ```
 
-### Masquer la consommation
+### Hide Consumption
 
 ```jinja2
-{# APRÈS (conso masquée) #}
+{# AFTER (consumption hidden) #}
 <p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} pas{{ close }}</small></p>
 ```
 
-### Masquer toute la ligne de statistiques
+### Hide Entire Statistics Line
 
 ```jinja2
-{# Supprimez complètement cette ligne #}
+{# Delete this line completely #}
 <p style="text-align:start"><small>...</small></p>
 ```
 
 ---
 
-## 🎯 Ajouter de nouvelles statistiques
+## 🎯 Add New Statistics
 
-### Exemple : Ajouter la météo
+### Example: Add Weather
 
-**1. Ajoutez l'entité dans ENTITIES :**
+**1. Add entity in ENTITIES:**
 ```jinja2
 {% set ENTITIES = {
   'tasks': 'sensor.taches_aujourd_hui',
-  'steps': 'sensor.votre_pas_journee',
-  'conso': 'sensor.votre_conso_electrique',
-  'sleep': 'sensor.votre_duree_sommeil',
-  'meteo': 'sensor.temperature_exterieure'  # ← Nouveau
+  'steps': 'sensor.your_daily_steps',
+  'conso': 'sensor.your_power_consumption',
+  'sleep': 'sensor.your_sleep_duration',
+  'weather': 'sensor.outdoor_temperature'  # ← New
 } %}
 ```
 
-**2. Récupérez la valeur :**
+**2. Get value:**
 ```jinja2
-{% set meteo = states(ENTITIES.meteo)|float(0)|round(1) %}
+{% set weather = states(ENTITIES.weather)|float(0)|round(1) %}
 ```
 
-**3. Affichez-la :**
+**3. Display it:**
 ```jinja2
-<p style="text-align:start"><small>{{ open }}🌡️ {{ meteo }}°C  {{ EMOJI.steps }} {{ steps_txt }} pas  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+<p style="text-align:start"><small>{{ open }}🌡️ {{ weather }}°C  {{ EMOJI.steps }} {{ steps_txt }} pas  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
 ```
 
 ---
 
-## 🌍 Traduire en anglais
+## 🌍 Translate to English
 
-**Exemple pour le matin :**
+**Example for morning:**
 
 ```jinja2
 {# Morning #}
@@ -293,28 +293,28 @@ Personnalisez votre widget pour qu'il corresponde parfaitement à vos besoins !
 </b>
 ```
 
-**⚠️ N'oubliez pas de modifier aussi :**
+**⚠️ Don't forget to also modify:**
 - `évènement` → `event`
 - `tâche` → `task`
 - `anniversaire` → `birthday`
-- La fonction plurielle `s(n)`
+- Plural function `s(n)`
 
 ---
 
-## 💾 Sauvegarder vos modifications
+## 💾 Save Your Changes
 
-Après chaque modification :
+After each modification:
 
-1. **Modifiez** le template dans le widget Android
-2. **Vérifiez** l'aperçu en bas de l'écran
-3. **Sauvegardez** le widget
-4. **Attendez** quelques secondes pour voir les changements
+1. **Edit** template in Android widget
+2. **Check** preview at bottom of screen
+3. **Save** widget
+4. **Wait** a few seconds to see changes
 
 ---
 
-## 💡 Exemples de personnalisation
+## 💡 Customization Examples
 
-### Style minimaliste (encore plus simple)
+### Minimalist Style (even simpler)
 
 ```jinja2
 {# Morning #}
@@ -328,7 +328,7 @@ Après chaque modification :
 </b>
 ```
 
-### Style détaillé
+### Detailed Style
 
 ```jinja2
 {# Morning #}
@@ -336,17 +336,17 @@ Après chaque modification :
 <b>
 <p style="text-align:start">
 {{ open }}🌅 Bonjour{{ close }} {{ NAME }} {{ open }}!{{ close }}<br>
-{{ open }}Nuit :{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}<br>
-{{ open }}Aujourd'hui :{{ close }} {{ join_list(items) }}
+{{ open }}Night:{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}<br>
+{{ open }}Today:{{ close }} {{ join_list(items) }}
 </p>
-<p style="text-align:start"><small>{{ open }}📊 Activité : {{ EMOJI.steps }} {{ steps_txt }} pas<br>💰 Énergie : {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+<p style="text-align:start"><small>{{ open }}📊 Activity: {{ EMOJI.steps }} {{ steps_txt }} steps<br>💰 Energy: {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
 </b>
 ```
 
 ---
 
-## 🚀 Prochaines étapes
+## 🚀 Next Steps
 
-- 🔧 [Dépannage](troubleshooting.md)
-- 🚀 [Fonctionnalités avancées](advanced_features.md)
-- 📖 [Retour au README](../README.md)
+- 🔧 [Troubleshooting](troubleshooting.md)
+- 🚀 [Advanced features](advanced_features.md)
+- 📖 [Back to README](../README.md)

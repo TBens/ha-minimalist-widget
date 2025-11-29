@@ -1,133 +1,135 @@
 # 🌈 Home Assistant Minimalist Widget
 
-Un widget Android minimaliste pour Home Assistant affichant votre résumé quotidien avec des messages contextuels selon l'heure de la journée.
+> A minimalist Android widget for Home Assistant displaying your daily summary with contextual messages based on time of day.
 
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-41BDF5?logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-41BDF5?style=flat&logo=homeassistant&logoColor=ffffff)](https://www.home-assistant.io/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Language](https://img.shields.io/badge/Language-Jinja2-red)](https://jinja.palletsprojects.com/)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFDD00?logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/tben)
 
 ---
 
-## 📸 Aperçu
+## 📸 Preview
 
-<!-- TODO: Ajouter vos captures d'écran ici -->
-![Widget Morning](assets/demo.gif)
+![Preview](assets/screenshots/illustration.png)
 
-**Inspiré par [Joi Planner](https://joi.software/)** - Une visuel que j'ai voulu recréer avec mes propres données Home Assistant !
-
----
-
-## ✨ Fonctionnalités
-
-- 🌅 **Messages contextuels** - Différents messages selon l'heure (matin, après-midi, soirée, nuit)
-- 😴 **Durée de sommeil** - Affichage du temps de sommeil via intégration smartphone
-- 📅 **Événements restants** - Compte uniquement les événements à venir dans la journée
-- ✅ **Tâches intelligentes** - Filtre automatiquement les tâches du jour (inclut retards et sans date)
-- 🎂 **Anniversaires** - Détection automatique des anniversaires du jour
-- 🚶‍♂️ **Statistiques quotidiennes** - Nombre de pas et consommation électrique
-- 🇫🇷 **Formatage français** - Liste avec virgules et "et" avant le dernier élément
-- 🎨 **Personnalisable** - Emojis, couleurs, et données entièrement configurables
-
-## 📋 Exemples d'affichage
-
-**Matin sans anniversaire :**
-> Bonjour Thomas, tu as dormi 🌈 7h 34, tu as 📅 2 événements et ☑️ 7 tâches aujourd'hui
-
-**Matin avec anniversaire :**
-> Bonjour Thomas, tu as dormi 🌈 7h 34, tu as 📅 2 événements, ☑️ 7 tâches et 🎂 1 anniversaire aujourd'hui
-
-**Soir :**
-> Bonsoir Thomas, tu as 📅 0 événement et ✅ 0 tâche aujourd'hui
->
-> 🚶‍♂️ 12 456 pas  ⚡ 3.24€
+**Inspired by [Joi Planner](https://joi.software/)** - An app that I wanted to recreate with my own Home Assistant data!
 
 ---
 
-## 🚀 Installation rapide
+## ✨ Features
 
-### Prérequis
+- 🌅 **Contextual messages** - Different messages based on time of day (morning, afternoon, evening, night)
+- 😴 **Sleep duration** - Display sleep time via smartphone integration
+- 📅 **Remaining events** - Only counts upcoming events in the day
+- ✅ **Smart tasks** - Automatically filters tasks for today (includes overdue and no-date tasks)
+- 🎂 **Birthdays** - Automatic detection of today's birthdays
+- 🚶‍♂️ **Daily statistics** - Step count and power consumption
+- 🎨 **Customizable** - Emojis, colors, and data fully configurable
 
-- Home Assistant installé
-- Application Home Assistant pour Android
-- Intégrations configurées :
-  - 📅 Calendrier (Google Calendar, CalDAV, etc.)
+## 📋 Display Examples
+
+![Preview](assets/screenshots/exemple-affichages.png)
+
+---
+
+## 🚀 Quick Installation
+
+### Prerequisites
+
+- Home Assistant installed
+- Home Assistant app for Android
+- Configured integrations:
+  - 📅 Calendar (Google Calendar, CalDAV, etc.)
   - ✅ Todo (Google Tasks, Todoist, etc.)
-  - 📱 Companion App pour smartphone (sommeil, pas)
+  - 📱 Companion App for smartphone (sleep, steps)
 
-### 1. Créer les sensors
+### 1. Create sensors
 
-Copiez le contenu de [`config/sensors.yaml`](config/configuration_exemple.yaml) dans votre `configuration.yaml`.
+Copy the content of [`config/configuration_example.yaml`](config/configuration_example.yaml) into your `configuration.yaml`.
 
-**Sensors nécessaires :**
-- `sensor.taches_aujourd_hui` - Compte les tâches du jour
-- `sensor.events_today` - Compte les événements restants
+**Required sensors:**
+- `sensor.taches_aujourd_hui` - Counts tasks for today
+- `sensor.events_today` - Counts remaining events
 
-### 2. Redémarrer Home Assistant
+### 2. Restart Home Assistant
 
-Redémarrez HA ou rechargez les templates :
-- **Outils de développement** > **YAML** > **Recharger les entités de template**
+Restart HA or reload templates:
+- **Developer Tools** > **YAML** > **Reload template entities**
 
-### 3. Ajouter le widget
+### 3. Add the widget
 
-1. Long press sur votre écran d'accueil Android
-2. Sélectionnez **Home Assistant** dans la liste des widgets
-3. Choisissez **Template**
-4. Copiez le contenu de [`config/widget_template.jinja2`](config/widget_template.jinja2)
-5. Personnalisez les paramètres en haut du code
-6. Sauvegardez !
+1. Long press on your Android home screen
+2. Select **Home Assistant** from the widget list
+
+![Widget List](assets/screenshots/step1_widget_list.png)
+
+3. Choose **Template** widget
+
+![Template Widget](assets/screenshots/step2_template_widget.png)
+
+4. Configure the widget:
+
+![Widget Configuration](assets/screenshots/step3_widget_config.png)
+
+- Copy the content of [`config/widget_template.jinja2`](config/widget_template.jinja2)
+- Customize the parameters at the top of the code
+- Check the preview
+
+![Preview](assets/screenshots/step4_preview.png)
+
+5. Save!
 
 ---
 
 ## 📚 Documentation
 
-- 📖 [Installation détaillée](docs/installation.md)
-- 🎨 [Guide de personnalisation](docs/customization.md)
-- 🔧 [Dépannage](docs/troubleshooting.md)
-- 🚀 [Fonctionnalités avancées](docs/advanced_features.md)
+- 📖 [Detailed installation](docs/installation.md)
+- 🎨 [Customization guide](docs/customization.md)
+- 🔧 [Troubleshooting](docs/troubleshooting.md)
+- 🚀 [Advanced features](docs/advanced_features.md)
 
 ---
 
-## 🗂️ Structure du projet
+## 🗂️ Project Structure
 
 ```
 ha-minimalist-widget/
-├── README.md                       # Ce fichier
-├── LICENSE                         # Licence MIT
-├── CHANGELOG.md                    # Historique des versions
+├── README.md                       # This file
+├── LICENSE                         # MIT License
+├── CHANGELOG.md                    # Version history
 │
 ├── config/
-│   ├── sensors.yaml               # Sensors template à ajouter dans HA
-│   ├── widget_template.jinja2     # Code du widget Android
-│   └── configuration_example.yaml # Exemple de configuration complète
+│   ├── configuration_example.yaml # Complete configuration for HA
+│   └── widget_template.jinja2     # Android widget code
 │
 ├── docs/
-│   ├── installation.md            # Guide d'installation détaillé
-│   ├── customization.md           # Personnalisation avancée
-│   ├── troubleshooting.md         # Résolution de problèmes
-│   └── advanced_features.md       # Fonctionnalités avancées
+│   ├── installation.md            # Detailed installation guide
+│   ├── customization.md           # Advanced customization
+│   ├── troubleshooting.md         # Problem solving
+│   └── advanced_features.md       # Advanced features
 │
 └── assets/
-    ├── screenshots/               # Captures d'écran du widget
+    ├── screenshots/               # Widget screenshots
     │   ├── widget_morning.png
     │   ├── widget_afternoon.png
     │   ├── widget_evening.png
     │   └── widget_night.png
-    └── demo.gif                   # Animation de démonstration
+    └── demo.gif                   # Demo animation
 ```
 
 ---
 
-## ⚙️ Personnalisation
+## ⚙️ Customization
 
-Le widget est entièrement personnalisable ! Modifiez la section **USER PARAMETERS** :
+The widget is fully customizable! Modify the **USER PARAMETERS** section:
 
 ```jinja2
-{% set NAME       = 'Thomas' %}        # Votre prénom
-{% set COLOR      = '#5b5b5b' %}       # Couleur du texte
-{% set CURRENCY   = '€' %}             # Symbole de devise
+{% set NAME       = 'Thomas' %}        # Your first name
+{% set COLOR      = '#5b5b5b' %}       # Text color
+{% set CURRENCY   = '€' %}             # Currency symbol
 {% set EMOJI = {
-  'sleep': '🌈',                       # Emojis personnalisables
+  'sleep': '🌈',                       # Customizable emojis
   'event': '🗓️',
   'task_ok': '✅',
   'task_many': '☑️',
@@ -137,72 +139,26 @@ Le widget est entièrement personnalisable ! Modifiez la section **USER PARAMETE
 } %}
 ```
 
-**Voir la [documentation de personnalisation](docs/customization.md) pour plus d'options.**
+**See the [customization documentation](docs/customization.md) for more options.**
 
 ---
 
-## 🤝 Contribution
+## ☕ Support the Project
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
-
-- 🐛 Signaler des bugs via les [Issues](../../issues)
-- 💡 Proposer des nouvelles fonctionnalités
-- 🔧 Soumettre des Pull Requests
-- ⭐ Mettre une étoile si ce projet vous est utile !
-
----
-
-## 📝 Roadmap
-
-Idées pour les prochaines versions :
-
-- [ ] Affichage du prochain événement avec son heure
-- [ ] Alarme/réveil pour la période nuit
-- [ ] Alertes domotiques (lumières oubliées, porte ouverte, etc.)
-- [ ] Intégration météo
-- [ ] Support multi-langues
-- [ ] Thèmes de couleurs prédéfinis
-
----
-
-## 📄 Licence
-
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
----
-
-## 🙏 Remerciements
-
-- **[Joi Planner](https://play.google.com/store/apps/details?id=com.joi.planner)** - Application qui a inspiré ce projet
-- **[Home Assistant](https://www.home-assistant.io/)** - La plateforme domotique open-source
-
----
-
-## 💬 Support
-
-Besoin d'aide ? Plusieurs options :
-
-- 📖 Consultez la [documentation](docs/)
-- 💬 Partagez sur le [Forum Home Assistant](https://community.home-assistant.io/)
-
----
-
-## ☕ Soutenir le projet
-
-Si ce widget vous est utile et que vous souhaitez soutenir son développement, vous pouvez m'offrir un café ! ☕
+If this widget is useful to you and you want to support its development, you can buy me a coffee! ☕
 
 <a href="https://buymeacoffee.com/tben" target="_blank">
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50">
 </a>
 
-Chaque contribution est appréciée et aide à maintenir ce projet ! 🙏
+Every contribution is appreciated and helps maintain this project! 🙏
 
 ---
 
 <p align="center">
-  Fait avec ❤️ pour la communauté Home Assistant
+  Made with ❤️ for the Home Assistant community
 </p>
 
 <p align="center">
-  <a href="#-home-assistant-minimalist-widget">⬆️ Retour en haut</a>
+  <a href="#-home-assistant-minimalist-widget">⬆️ Back to top</a>
 </p>

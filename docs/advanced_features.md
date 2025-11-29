@@ -1,25 +1,25 @@
-# 🚀 Fonctionnalités avancées
+# 🚀 Advanced Features
 
-Allez plus loin avec votre widget en ajoutant des fonctionnalités personnalisées !
+Go further with your widget by adding custom features!
 
 ---
 
-## 📱 Afficher le prochain événement
+## 📱 Display Next Event
 
-### But
-Afficher le titre et l'heure du prochain événement de la journée.
+### Purpose
+Display title and time of next event of the day.
 
 ### Code
 
-Le sensor `events_today` contient déjà ces informations dans ses attributs !
+The `events_today` sensor already contains this information in its attributes!
 
 ```jinja2
-{# Dans la section WIDGET LOGIC #}
+{# In WIDGET LOGIC section #}
 {% set next_title = state_attr(EVENTS_SENSOR, 'next_event_title')|default('', true) %}
 {% set next_time = state_attr(EVENTS_SENSOR, 'next_event_time')|default('', true) %}
 ```
 
-**Affichage conditionnel :**
+**Conditional display:**
 
 ```jinja2
 {% if next_title != '' %}
@@ -27,41 +27,41 @@ Le sensor `events_today` contient déjà ces informations dans ses attributs !
 {% endif %}
 ```
 
-**Résultat :**
-> Bonjour Thomas, tu as dormi 🌈 7h 34, tu as 📅 2 événements et ☑️ 3 tâches aujourd'hui
+**Result:**
+> Good morning Thomas, you slept 🌈 7h 34, you have 📅 2 events and ☑️ 3 tasks today
 >
-> 🗓️ 14:30 : Réunion équipe
+> 🗓️ 14:30 : Team meeting
 
 ---
 
-## ⏰ Afficher le réveil la nuit
+## ⏰ Display Alarm at Night
 
-### But
-Afficher l'heure du prochain réveil pendant la période nuit (22h-5h).
+### Purpose
+Display next alarm time during night period (10pm-5am).
 
-### Prérequis
-Vous devez avoir un sensor qui indique l'heure du prochain réveil. Exemples :
-- `sensor.next_alarm` (Companion App Android)
+### Prerequisites
+You need a sensor indicating next alarm time. Examples:
+- `sensor.next_alarm` (Android Companion App)
 - `sensor.iphone_next_alarm` (iOS)
 
 ### Code
 
-**1. Ajouter l'entité dans ENTITIES :**
+**1. Add entity in ENTITIES:**
 
 ```jinja2
 {% set ENTITIES = {
   'tasks': 'sensor.taches_aujourd_hui',
-  'steps': 'sensor.thomas_pas_journee',
-  'conso': 'sensor.prix_consommation_journee_total',
-  'sleep': 'sensor.thomas_duree_sommeil',
-  'alarm': 'sensor.next_alarm'  # ← Nouveau
+  'steps': 'sensor.thomas_daily_steps',
+  'conso': 'sensor.daily_power_consumption',
+  'sleep': 'sensor.thomas_sleep_duration',
+  'alarm': 'sensor.next_alarm'  # ← New
 } %}
 ```
 
-**2. Récupérer et calculer les données :**
+**2. Get and calculate data:**
 
 ```jinja2
-{# Dans la section WIDGET LOGIC #}
+{# In WIDGET LOGIC section #}
 {% set alarm_raw = states(ENTITIES.alarm) %}
 {% set alarm_time = '' %}
 {% set alarm_in = '' %}
@@ -71,76 +71,76 @@ Vous devez avoir un sensor qui indique l'heure du prochain réveil. Exemples :
   {% set now_ts = as_timestamp(now()) %}
   {% set diff_hours = ((alarm_ts - now_ts) / 3600)|round(1) %}
   {% set alarm_time = (as_datetime(alarm_ts)|as_local).strftime('%H:%M') %}
-  {% set alarm_in = 'dans ' ~ diff_hours ~ 'h' %}
+  {% set alarm_in = 'in ' ~ diff_hours ~ 'h' %}
 {% endif %}
 ```
 
-**3. Modifier la période nuit :**
+**3. Modify night period:**
 
 ```jinja2
 {# Night #}
 {% else %}
 <b>
 <p style="text-align:start">
-{{ open }}Bonne nuit{{ close }} {{ NAME }}, {{ open }}tu as{{ close }} {{ join_list(items) }} {{ open }}aujourd'hui{{ close }}
+{{ open }}Good night{{ close }} {{ NAME }}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}
 {% if alarm_time != '' %}
-<br>{{ open }}⏰ Réveil{{ close }} {{ alarm_in }} {{ open }}(à {{ alarm_time }}){{ close }}
+<br>{{ open }}⏰ Alarm{{ close }} {{ alarm_in }} {{ open }}(at {{ alarm_time }}){{ close }}
 {% endif %}
 </p>
-<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} pas  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} steps  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
 </b>
 {% endif %}
 ```
 
-**Résultat :**
-> Bonne nuit Thomas, tu as 📅 0 événement et ✅ 0 tâche aujourd'hui
-> ⏰ Réveil dans 7.5h (à 06:30)
+**Result:**
+> Good night Thomas, you have 📅 0 events and ✅ 0 tasks today
+> ⏰ Alarm in 7.5h (at 06:30)
 
 ---
 
-## 🎯 Afficher un objectif de pas
+## 🎯 Display Step Goal
 
-### But
-Encourager l'utilisateur à atteindre un objectif quotidien de pas.
+### Purpose
+Encourage user to reach daily step goal.
 
 ### Code
 
 ```jinja2
-{# Définir l'objectif #}
+{# Define goal #}
 {% set STEP_GOAL = 10000 %}
 
-{# Calculer le pourcentage #}
+{# Calculate percentage #}
 {% set step_percent = ((steps / STEP_GOAL) * 100)|round(0)|int %}
 {% set steps_remaining = (STEP_GOAL - steps)|int %}
 ```
 
-**Affichage conditionnel :**
+**Conditional display:**
 
 ```jinja2
-{# Dans la ligne de statistiques #}
-<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} / {{ STEP_GOAL|string }} pas ({{ step_percent }}%){{ close }}</small></p>
+{# In statistics line #}
+<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} / {{ STEP_GOAL|string }} steps ({{ step_percent }}%){{ close }}</small></p>
 
-{# Ou avec message d'encouragement #}
+{# Or with encouragement message #}
 {% if steps < STEP_GOAL %}
-<p style="text-align:start"><small>{{ open }}💪 Plus que {{ steps_remaining }} pas pour atteindre ton objectif !{{ close }}</small></p>
+<p style="text-align:start"><small>{{ open }}💪 Only {{ steps_remaining }} steps left to reach your goal!{{ close }}</small></p>
 {% else %}
-<p style="text-align:start"><small>{{ open }}🎉 Objectif atteint ! Bravo !{{ close }}</small></p>
+<p style="text-align:start"><small>{{ open }}🎉 Goal reached! Well done!{{ close }}</small></p>
 {% endif %}
 ```
 
 ---
 
-## 🌡️ Ajouter la météo
+## 🌡️ Add Weather
 
-### But
-Afficher la température et les conditions météo actuelles.
+### Purpose
+Display current temperature and weather conditions.
 
-### Prérequis
-Avoir une intégration météo configurée (Met.no, OpenWeatherMap, etc.)
+### Prerequisites
+Have weather integration configured (Met.no, OpenWeatherMap, etc.)
 
 ### Code
 
-**1. Ajouter les entités :**
+**1. Add entities:**
 
 ```jinja2
 {% set ENTITIES = {
@@ -150,13 +150,13 @@ Avoir une intégration météo configurée (Met.no, OpenWeatherMap, etc.)
 } %}
 ```
 
-**2. Récupérer les données :**
+**2. Get data:**
 
 ```jinja2
 {% set temp = states(ENTITIES.weather_temp)|float(0)|round(0) %}
 {% set cond = states(ENTITIES.weather_cond) %}
 
-{# Emoji selon la condition #}
+{# Emoji based on condition #}
 {% set weather_emoji = '☀️' %}
 {% if 'cloud' in cond|lower %}{% set weather_emoji = '☁️' %}
 {% elif 'rain' in cond|lower %}{% set weather_emoji = '🌧️' %}
@@ -164,52 +164,52 @@ Avoir une intégration météo configurée (Met.no, OpenWeatherMap, etc.)
 {% endif %}
 ```
 
-**3. Afficher :**
+**3. Display:**
 
 ```jinja2
-<p style="text-align:start"><small>{{ open }}{{ weather_emoji }} {{ temp }}°C  {{ EMOJI.steps }} {{ steps_txt }} pas  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+<p style="text-align:start"><small>{{ open }}{{ weather_emoji }} {{ temp }}°C  {{ EMOJI.steps }} {{ steps_txt }} steps  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
 ```
 
 ---
 
-## 🚨 Alertes domotiques
+## 🚨 Home Automation Alerts
 
-### But
-Afficher des alertes si quelque chose nécessite votre attention.
+### Purpose
+Display alerts if something needs your attention.
 
-### Exemples d'alertes
+### Alert Examples
 
-**1. Lumières oubliées quand absent :**
+**1. Forgotten lights when away:**
 
 ```jinja2
-{# Définir les entités #}
+{# Define entities #}
 {% set presence = is_state('person.thomas', 'home') %}
-{% set lights_on = is_state('light.salon', 'on') or is_state('light.cuisine', 'on') %}
+{% set lights_on = is_state('light.living_room', 'on') or is_state('light.kitchen', 'on') %}
 
-{# Créer l'alerte #}
+{# Create alert #}
 {% set alerts = [] %}
 {% if not presence and lights_on %}
-  {% set _ = alerts.append('💡 Lumières allumées (absent)') %}
+  {% set _ = alerts.append('💡 Lights on (away)') %}
 {% endif %}
 ```
 
-**2. Porte ouverte trop longtemps :**
+**2. Door open too long:**
 
 ```jinja2
-{% set door_open = is_state('binary_sensor.porte_entree', 'on') %}
-{% set door_time = (now() - states.binary_sensor.porte_entree.last_changed).total_seconds() / 60 %}
+{% set door_open = is_state('binary_sensor.front_door', 'on') %}
+{% set door_time = (now() - states.binary_sensor.front_door.last_changed).total_seconds() / 60 %}
 
 {% if door_open and door_time > 30 %}
-  {% set _ = alerts.append('🚪 Porte ouverte depuis ' ~ door_time|round(0) ~ 'min') %}
+  {% set _ = alerts.append('🚪 Door open for ' ~ door_time|round(0) ~ 'min') %}
 {% endif %}
 ```
 
-**3. Afficher les alertes :**
+**3. Display alerts:**
 
 ```jinja2
 {% if alerts|length > 0 %}
 <p style="text-align:start; color:red;">
-<small><b>⚠️ Alertes :</b><br>
+<small><b>⚠️ Alerts:</b><br>
 {% for alert in alerts %}
 {{ alert }}<br>
 {% endfor %}
@@ -218,45 +218,45 @@ Afficher des alertes si quelque chose nécessite votre attention.
 {% endif %}
 ```
 
-**Résultat :**
-> ⚠️ Alertes :
-> 💡 Lumières allumées (absent)
-> 🚪 Porte ouverte depuis 45min
+**Result:**
+> ⚠️ Alerts:
+> 💡 Lights on (away)
+> 🚪 Door open for 45min
 
 ---
 
-## 📊 Statistiques hebdomadaires
+## 📊 Weekly Statistics
 
-### But
-Comparer les statistiques du jour avec la moyenne de la semaine.
+### Purpose
+Compare daily statistics with week average.
 
 ### Code
 
-**Créer un sensor pour la moyenne hebdomadaire :**
+**Create sensor for weekly average:**
 
 ```yaml
-# Dans configuration.yaml
+# In configuration.yaml
 template:
   - sensor:
-      - name: "Moyenne pas semaine"
+      - name: "Average Weekly Steps"
         state: >
-          {{ states('sensor.thomas_pas_semaine')|int / 7 }}
-        unit_of_measurement: "pas"
+          {{ states('sensor.thomas_weekly_steps')|int / 7 }}
+        unit_of_measurement: "steps"
 ```
 
-**Afficher la comparaison :**
+**Display comparison:**
 
 ```jinja2
-{% set avg_steps = states('sensor.moyenne_pas_semaine')|int(0) %}
+{% set avg_steps = states('sensor.average_weekly_steps')|int(0) %}
 {% set diff = steps - avg_steps %}
 {% set diff_percent = ((diff / avg_steps) * 100)|round(0) if avg_steps > 0 else 0 %}
 
 <p style="text-align:start"><small>
-{{ open }}{{ EMOJI.steps }} {{ steps_txt }} pas 
+{{ open }}{{ EMOJI.steps }} {{ steps_txt }} steps 
 {% if diff > 0 %}
-(+{{ diff_percent }}% vs moyenne)
+(+{{ diff_percent }}% vs average)
 {% elif diff < 0 %}
-({{ diff_percent }}% vs moyenne)
+({{ diff_percent }}% vs average)
 {% endif %}
 {{ close }}
 </small></p>
@@ -264,54 +264,54 @@ template:
 
 ---
 
-## 🎨 Thèmes de couleurs
+## 🎨 Color Themes
 
-### But
-Changer les couleurs selon l'heure ou l'humeur.
+### Purpose
+Change colors based on time or mood.
 
 ### Code
 
 ```jinja2
-{# Définir le thème selon l'heure #}
+{# Define theme based on time #}
 {% if 5 <= h < 12 %}
-  {% set COLOR = '#FF9800' %}  {# Orange pour le matin #}
+  {% set COLOR = '#FF9800' %}  {# Orange for morning #}
 {% elif 12 <= h < 17 %}
-  {% set COLOR = '#2196F3' %}  {# Bleu pour l'après-midi #}
+  {% set COLOR = '#2196F3' %}  {# Blue for afternoon #}
 {% elif 17 <= h < 22 %}
-  {% set COLOR = '#9C27B0' %}  {# Violet pour la soirée #}
+  {% set COLOR = '#9C27B0' %}  {# Purple for evening #}
 {% else %}
-  {% set COLOR = '#607D8B' %}  {# Gris-bleu pour la nuit #}
+  {% set COLOR = '#607D8B' %}  {# Gray-blue for night #}
 {% endif %}
 ```
 
 ---
 
-## 🔔 Messages motivants
+## 🔔 Motivational Messages
 
-### But
-Afficher des messages d'encouragement selon les statistiques.
+### Purpose
+Display encouragement messages based on statistics.
 
 ### Code
 
 ```jinja2
 {% set motivations = [] %}
 
-{# Tâches complètes #}
+{# Tasks complete #}
 {% if tasks == 0 %}
-  {% set _ = motivations.append('🎉 Toutes tes tâches sont faites !') %}
+  {% set _ = motivations.append('🎉 All your tasks are done!') %}
 {% endif %}
 
-{# Objectif pas atteint #}
+{# Step goal reached #}
 {% if steps >= 10000 %}
-  {% set _ = motivations.append('💪 Objectif de pas atteint !') %}
+  {% set _ = motivations.append('💪 Step goal reached!') %}
 {% endif %}
 
-{# Pas d'événements #}
+{# No events #}
 {% if ev_rest == 0 %}
-  {% set _ = motivations.append('😌 Plus d\'événements aujourd\'hui !') %}
+  {% set _ = motivations.append('😌 No more events today!') %}
 {% endif %}
 
-{# Afficher #}
+{# Display #}
 {% if motivations|length > 0 %}
 <p style="text-align:start"><small><i>{{ motivations|join(' ') }}</i></small></p>
 {% endif %}
@@ -319,54 +319,71 @@ Afficher des messages d'encouragement selon les statistiques.
 
 ---
 
-## 📱 Plusieurs widgets
+## 📱 Multiple Widgets
 
-### But
-Créer plusieurs widgets avec des informations différentes.
+### Purpose
+Create multiple widgets with different information.
 
-### Idées
+### Ideas
 
-**Widget 1 : Résumé complet** (actuel)
-**Widget 2 : Tâches uniquement**
+**Widget 1: Complete summary** (current)
+**Widget 2: Tasks only**
 ```jinja2
 <b><p style="text-align:start">
 {% if tasks == 0 %}
-✅ Aucune tâche !
+✅ No tasks!
 {% else %}
-📝 {{ tasks }} tâche{{ s(tasks) }} à faire
+📝 {{ tasks }} task{{ s(tasks) }} to do
 {% endif %}
 </p></b>
 ```
 
-**Widget 3 : Prochain événement**
+**Widget 3: Next event**
 ```jinja2
 <b><p style="text-align:start">
 {% if next_title != '' %}
 {{ EMOJI.event }} {{ next_time }}<br>
 {{ next_title }}
 {% else %}
-😌 Aucun événement
+😌 No events
 {% endif %}
 </p></b>
 ```
 
 ---
 
-## 💡 Idées futures
+## 🎯 Integration with Automations
 
-- 📧 Nombre d'emails non lus
-- 📦 Suivi de colis
-- 🚗 Temps de trajet jusqu'au travail
-- 💰 Budget du jour
-- 🏃 Objectifs fitness
-- 🎵 Musique en cours
-- 📺 Série à regarder
+### Purpose
+Trigger actions from widget (via tap action).
+
+**Note:** Template widgets don't natively support tap actions, but you can:
+1. Create button in widget
+2. Use HA script
+3. Call it via link
+
+**Example (advanced):**
+```html
+<a href="homeassistant://navigate/lovelace/tasks">📝 View tasks</a>
+```
 
 ---
 
-## 🔗 Ressources
+## 💡 Future Ideas
 
-- 📖 [Documentation Jinja2](https://jinja.palletsprojects.com/)
-- 📚 [Templates Home Assistant](https://www.home-assistant.io/docs/configuration/templating/)
-- 💬 [Forum Home Assistant](https://community.home-assistant.io/)
-- 📖 [Retour au README](../README.md)
+- 📧 Unread email count
+- 📦 Package tracking
+- 🚗 Commute time to work
+- 💰 Daily budget
+- 🏃 Fitness goals
+- 🎵 Current music
+- 📺 Series to watch
+
+---
+
+## 🔗 Resources
+
+- 📖 [Jinja2 Documentation](https://jinja.palletsprojects.com/)
+- 📚 [Home Assistant Templates](https://www.home-assistant.io/docs/configuration/templating/)
+- 💬 [Home Assistant Forum](https://community.home-assistant.io/)
+- 📖 [Back to README](../README.md)
