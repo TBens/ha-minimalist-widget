@@ -3,15 +3,19 @@
 > A minimalist Android widget for Home Assistant displaying your daily summary with contextual messages based on time of day.
 
 <p>
-  <img src="assets/badges/home-assistant.png" height="28" alt="Home Assistant Compatible" />
-  <img src="assets/badges/buy-me-a-coffee.png" height="28" alt="Buy Me a Coffee" />
+  <a href="https://www.home-assistant.io/" target="_blank">
+    <img src="assets/badges/home-assistant.png" height="28" alt="Home Assistant Compatible" />
+  </a>
+  <a href="https://buymeacoffee.com/tben" target="_blank">
+    <img src="assets/badges/buy-me-a-coffee.png" height="28" alt="Buy Me a Coffee" />
+  </a>
 </p>
 
 <p align="left">
-  <img src="assets/screenshots/widget-cover.gif" width="100%" />
+  <img src="assets/screenshots/widget-cover.gif" width="80%" />
 </p>
 
-**Inspired by [Joi Planner](https://joi.software/)** - An excellent app that I wanted to recreate with my own Home Assistant data!
+**Inspired by [Joi Planner](https://joi.software/)** - An app that I wanted to recreate with my own Home Assistant data!
 
 ## Features
 
@@ -89,7 +93,7 @@ Select the Template widget
 <p align="center"><img src="assets/screenshots/step3_widget_config.png" width="100%" /></p>
 <b>3. Configure & Save</b>
 <br/>
-Paste code, set size to 28, Transparent theme, White text
+Paste <a href="config/widget_template_en.jinja2">code</a>, set size to <b>28</b>, <b>Transparent</b> theme, <b>White</b> text
 </td>
 </tr>
 </table>
@@ -111,7 +115,8 @@ ha-minimalist-widget/
 │
 ├── config/
 │   ├── configuration_example.yaml # Complete configuration for HA
-│   └── widget_template.jinja2     # Android widget code
+│   ├── widget_template_en.jinja2  # Android widget code (English)
+│   └── widget_template_fr.jinja2  # Android widget code (French)
 │
 ├── docs/
 │   ├── installation.md            # Detailed installation guide
@@ -131,6 +136,10 @@ ha-minimalist-widget/
 ## Customization
 
 The widget is fully customizable! Modify the **USER PARAMETERS** section:
+
+**Available languages:**
+- 🇬🇧 English: [`widget_template_en.jinja2`](config/widget_template_en.jinja2)
+- 🇫🇷 French: [`widget_template_fr.jinja2`](config/widget_template_fr.jinja2)
 
 ```jinja2
 {% set NAME       = 'Thomas' %}        # Your first name

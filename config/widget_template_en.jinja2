@@ -1,0 +1,140 @@
+{# ============================
+   🔧 USER PARAMETERS
+   ============================ #}
+
+{% set NAME       = 'Thomas' %}
+{% set COLOR      = '#5b5b5b' %}        {# Text color #}
+{% set CURRENCY   = '€' %}              {# Currency symbol #}
+{% set USE_24H    = true %}             {# true=24h, false=12h #}
+{% set SEP        = '' %}               {# Thousands separator for numbers #}
+{% set EVENTS_SENSOR = 'sensor.events_today' %}   {# ← Sensor: remaining events today #}
+
+{% set EMOJI = {
+  'sleep': '🌈',
+  'event': '🗓️',
+  'task_ok': '✅',
+  'task_many': '☑️',
+  'steps': '🚶‍♂️',
+  'power': '⚡',
+  'bday': '🎂'
+} %}
+
+{# Entities to adapt #}
+{% set ENTITIES = {
+  'tasks': 'sensor.tasks_today',
+  'steps': 'sensor.your_daily_steps',
+  'conso': 'sensor.your_power_consumption',
+  'sleep': 'sensor.your_sleep_duration'
+} %}
+
+{# (Optional) birthday calendar if you want to keep this info #}
+{% set BIRTHDAYS = [
+  'calendar.your_birthdays'
+] %}
+
+{# ============================
+   🚀 WIDGET LOGIC (do not edit below)
+   ============================ #}
+
+{# Base data #}
+{% set tasks     = states(ENTITIES.tasks)|int(0) %}
+{% set steps     = states(ENTITIES.steps)|int(0) %}
+{% set conso     = states(ENTITIES.conso)|float(0)|round(2) %}
+{% set sleep_raw = states(ENTITIES.sleep)|default('—', true) %}
+
+{# Time windows #}
+{% set h         = now().hour %}
+
+{# Events from sensor #}
+{% set ev_rest   = states(EVENTS_SENSOR)|int(0) %}
+{% set next_title= state_attr(EVENTS_SENSOR, 'next_event_title')|default('', true) %}
+{% set next_time = state_attr(EVENTS_SENSOR, 'next_event_time')|default('', true) %}
+
+{# Birthdays (optional) #}
+{% set start_day = as_timestamp(today_at('00:00')) %}
+{% set end_day   = as_timestamp(today_at('23:59:59')) %}
+{% set bday = namespace(today=0) %}
+{% for a in BIRTHDAYS %}
+  {% set st = state_attr(a,'start_time') %}
+  {% if st %}
+    {% set ts = as_timestamp(st) %}
+    {% if ts is number and start_day <= ts <= end_day %}
+      {% set bday.today = bday.today + 1 %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{# Formatting helpers #}
+{% set steps_txt = '{:,}'.format(steps) | replace(',', SEP) %}
+{% set open  = '<span style="color:' ~ COLOR ~ ';">' %}
+{% set close = '</span>' %}
+{% macro s(n) %}{{ 's' if n|int(0) > 1 else '' }}{% endmacro %}
+
+{# Macro to join list with commas and "and" #}
+{% macro join_list(items) -%}
+  {%- if items|length == 1 -%}
+    {{ items[0] }}
+  {%- elif items|length == 2 -%}
+    {{ items[0] }} {{ open }}and{{ close }} {{ items[1] }}
+  {%- else -%}
+    {%- for item in items -%}
+      {%- if loop.last -%}
+        {{ ' ' }}{{ open }}and{{ close }} {{ item }}
+      {%- elif loop.first -%}
+        {{ item }}
+      {%- else -%}
+        , {{ item }}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endmacro %}
+
+{# Build items list #}
+{% set task_emoji = EMOJI.task_ok if tasks == 0 else EMOJI.task_many %}
+{% set items = [
+  EMOJI.event ~ ' ' ~ ev_rest ~ ' event' ~ s(ev_rest),
+  task_emoji ~ ' ' ~ tasks ~ ' task' ~ s(tasks)
+] + ([EMOJI.bday ~ ' ' ~ bday.today ~ ' birthday' ~ s(bday.today)] if bday.today > 0 else []) %}
+
+{# ===== Variants by time of day ===== #}
+
+{# Morning #}
+{% if 5 <= h < 12 %}
+<b>
+<p style="text-align:start">
+{{ open }}Good morning{{ close }} {{ NAME }}, {{ open }}you slept{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}
+</p>
+<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} steps  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+</b>
+
+{# Afternoon #}
+{% elif 12 <= h < 17 %}
+<b>
+<p style="text-align:start">
+{{ open }}Good afternoon{{ close }} {{ NAME }}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}
+</p>
+<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} steps  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+</b>
+
+{# Evening #}
+{% elif 17 <= h < 22 %}
+<b>
+<p style="text-align:start">
+{{ open }}Good evening{{ close }} {{ NAME }}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}
+</p>
+<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} steps  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+</b>
+
+{# Night #}
+{% else %}
+<b>
+<p style="text-align:start">
+{{ open }}Good night{{ close }} {{ NAME }}, {{ open }}today you did{{ close }} {{ EMOJI.steps }} {{ steps_txt }} steps {{ open }}and consumed{{ close }} {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}
+</p>
+{% if tasks == 0 and ev_rest == 0 %}
+<p style="text-align:start"><small>{{ open }}✨ Day completed!{{ close }}</small></p>
+{% else %}
+<p style="text-align:start"><small>{{ open }}You still have{{ close }} {{ join_list(items) }}</small></p>
+{% endif %}
+</b>
+{% endif %}
