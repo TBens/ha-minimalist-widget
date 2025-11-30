@@ -2,38 +2,48 @@
 
 > A minimalist Android widget for Home Assistant displaying your daily summary with contextual messages based on time of day.
 
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-41BDF5?style=flat&logo=homeassistant&logoColor=ffffff)](https://www.home-assistant.io/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Language](https://img.shields.io/badge/Language-Jinja2-red)](https://jinja.palletsprojects.com/)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-FFDD00?logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/tben)
+<p>
+  <img src="assets/badges/home-assistant.png" height="28" alt="Home Assistant Compatible" />
+  <img src="assets/badges/buy-me-a-coffee.png" height="28" alt="Buy Me a Coffee" />
+</p>
 
 <p align="left">
-  <img src="assets/screenshots/widget_cover.png" width="100%" />
+  <img src="assets/screenshots/widget-cover.gif" width="100%" />
 </p>
 
 **Inspired by [Joi Planner](https://joi.software/)** - An excellent app that I wanted to recreate with my own Home Assistant data!
 
 ## Features
 
-- 🌅 **Contextual messages** - Different messages based on time of day (morning, afternoon, evening, night)
-- 😴 **Sleep duration** - Display sleep time via smartphone integration
-- 📅 **Remaining events** - Only counts upcoming events in the day
+- ☀️ **Contextual messages** - Different messages based on time of day (morning, afternoon, evening, night)
 - ✅ **Smart tasks** - Automatically filters tasks for today (includes overdue and no-date tasks)
+- 📅 **Remaining events** - Only counts upcoming events in the day
+- 🌙 **Sleep duration** - Display sleep time via smartphone integration
 - 🎂 **Birthdays** - Automatic detection of today's birthdays
-- 🚶‍♂️ **Daily statistics** - Step count and power consumption
+- 📊 **Daily statistics** - Step count and power consumption
 - 🎨 **Customizable** - Emojis, colors, and data fully configurable
 
 ## Display Examples
 
-<p align="center">
-  <img src="assets/screenshots/widget_morning.png" width="30%" style="padding: 0 10px;" />
-  <img src="assets/screenshots/widget_afternoon.png" width="30%" style="padding: 0 10px;" />
-  <img src="assets/screenshots/widget_evening.png" width="30%" style="padding: 0 10px;" />
-</p>
-
-<p align="center">
-  <i>Morning • Afternoon • Evening</i>
-</p>
+<table style="border: none;">
+<tr>
+<td width="33%" align="center" valign="top" style="border: none;">
+<img src="assets/screenshots/widget_morning.png" width="100%" />
+<br/>
+Morning
+</td>
+<td width="33%" align="center" valign="top" style="border: none;">
+<img src="assets/screenshots/widget_afternoon.png" width="100%" />
+<br/>
+Afternoon
+</td>
+<td width="33%" align="center" valign="top" style="border: none;">
+<img src="assets/screenshots/widget_evening.png" width="100%" />
+<br/>
+Evening
+</td>
+</tr>
+</table>
 
 ## Quick Installation
 
@@ -51,7 +61,7 @@
 Copy the content of [`config/configuration_example.yaml`](config/configuration_example.yaml) into your `configuration.yaml`.
 
 **Required sensors:**
-- `sensor.taches_aujourd_hui` - Counts tasks for today
+- `sensor.tasks_today` - Counts tasks for today
 - `sensor.events_today` - Counts remaining events
 
 ### 2. Restart Home Assistant
@@ -63,23 +73,20 @@ Restart HA or reload templates:
 
 <table>
 <tr>
-<td width="33%" align="center" valign="top">
-<img src="assets/screenshots/step1_widget_list.png" width="100%" />
-<br/>
+<td width="33%" valign="top">
+<p align="center"><img src="assets/screenshots/step1_widget_list.png" width="100%" /></p>
 <b>1. Widget List</b>
 <br/>
 Long press on home screen and select Home Assistant
 </td>
-<td width="33%" align="center" valign="top">
-<img src="assets/screenshots/step2_template_widget.png" width="100%" />
-<br/>
+<td width="33%" valign="top">
+<p align="center"><img src="assets/screenshots/step2_template_widget.png" width="100%" /></p>
 <b>2. Choose Template</b>
 <br/>
 Select the Template widget
 </td>
-<td width="33%" align="center" valign="top">
-<img src="assets/screenshots/step3_widget_config.png" width="100%" />
-<br/>
+<td width="33%" valign="top">
+<p align="center"><img src="assets/screenshots/step3_widget_config.png" width="100%" /></p>
 <b>3. Configure & Save</b>
 <br/>
 Paste code, set size to 28, Transparent theme, White text

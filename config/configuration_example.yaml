@@ -38,7 +38,7 @@ template:
           status: needs_action
         response_variable: tasks_data
     sensor:
-      - name: "Tâches aujourd'hui"
+      - name: "Tasks Today"
         unique_id: "tasks_today_count"
         icon: mdi:checkbox-marked-circle-outline
         state: >-
@@ -113,7 +113,7 @@ template:
 # Adapt names in the widget template.
 #
 # ✅ Created by this config:
-#   - sensor.taches_aujourd_hui
+#   - sensor.tasks_today
 #   - sensor.events_today
 #
 # 📱 To configure via Companion App:

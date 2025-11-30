@@ -94,7 +94,7 @@ entity_id: todo.thomas
 **4.1 Open Developer Tools > States**
 
 **4.2 Find your new sensors:**
-- `sensor.taches_aujourd_hui` ✅
+- `sensor.tasks_today` ✅
 - `sensor.events_today` ✅
 
 **4.3 Check values**
@@ -146,7 +146,7 @@ In the **USER PARAMETERS** section of the template:
 {% set CURRENCY = '€' %}           # ← Currency
 
 {% set ENTITIES = {
-  'tasks': 'sensor.taches_aujourd_hui',
+  'tasks': 'sensor.tasks_today',
   'steps': 'sensor.YOUR_daily_steps',        # ← ADAPT THIS
   'conso': 'sensor.YOUR_power_consumption',  # ← ADAPT THIS
   'sleep': 'sensor.YOUR_sleep_duration'      # ← ADAPT THIS

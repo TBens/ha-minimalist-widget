@@ -6,8 +6,8 @@
 {% set COLOR      = '#5b5b5b' %}        {# Text color #}
 {% set CURRENCY   = '€' %}              {# Currency symbol #}
 {% set USE_24H    = true %}             {# true=24h, false=12h #}
-{% set SEP        = '' %}              {# Thousands separator for numbers #}
-{% set EVENTS_SENSOR = 'sensor.events_today' %}   {# ← Capteur: évènements RESTANTS aujourd'hui #}
+{% set SEP        = '' %}               {# Thousands separator for numbers #}
+{% set EVENTS_SENSOR = 'sensor.events_today' %}   {# ← Sensor: remaining events today #}
 
 {% set EMOJI = {
   'sleep': '🌈',
@@ -21,15 +21,15 @@
 
 {# Entities to adapt #}
 {% set ENTITIES = {
-  'tasks': 'sensor.taches_aujourd_hui',
-  'steps': 'sensor.votre_pas_journee',
-  'conso': 'sensor.votre_conso_electrique',
-  'sleep': 'sensor.votre_duree_sommeil'
+  'tasks': 'sensor.tasks_today',
+  'steps': 'sensor.your_daily_steps',
+  'conso': 'sensor.your_power_consumption',
+  'sleep': 'sensor.your_sleep_duration'
 } %}
 
-{# (Optionnel) calendrier d'anniversaires si tu veux garder l'info #}
+{# (Optional) birthday calendar if you want to keep this info #}
 {% set BIRTHDAYS = [
-  'calendar.votre_anniversaires'
+  'calendar.your_birthdays'
 ] %}
 
 {# ============================
@@ -50,7 +50,7 @@
 {% set next_title= state_attr(EVENTS_SENSOR, 'next_event_title')|default('', true) %}
 {% set next_time = state_attr(EVENTS_SENSOR, 'next_event_time')|default('', true) %}
 
-{# Birthdays (facultatif) #}
+{# Birthdays (optional) #}
 {% set start_day = as_timestamp(today_at('00:00')) %}
 {% set end_day   = as_timestamp(today_at('23:59:59')) %}
 {% set bday = namespace(today=0) %}
@@ -70,7 +70,7 @@
 {% set close = '</span>' %}
 {% macro s(n) %}{{ 's' if n|int(0) > 1 else '' }}{% endmacro %}
 
-{# Macro pour joindre une liste avec virgules et "et" #}
+{# Macro to join list with commas and "et" (and) #}
 {% macro join_list(items) -%}
   {%- if items|length == 1 -%}
     {{ items[0] }}
@@ -89,7 +89,7 @@
   {%- endif -%}
 {%- endmacro %}
 
-{# Construction de la liste d'items #}
+{# Build items list #}
 {% set task_emoji = EMOJI.task_ok if tasks == 0 else EMOJI.task_many %}
 {% set items = [
   EMOJI.event ~ ' ' ~ ev_rest ~ ' évènement' ~ s(ev_rest),
@@ -129,8 +129,12 @@
 {% else %}
 <b>
 <p style="text-align:start">
-{{ open }}Bonne nuit{{ close }} {{ NAME }}, {{ open }}tu as{{ close }} {{ join_list(items) }} {{ open }}aujourd'hui{{ close }}
+{{ open }}Bonne nuit{{ close }} {{ NAME }}, {{ open }}aujourd'hui tu as fait{{ close }} {{ EMOJI.steps }} {{ steps_txt }} pas {{ open }}et consommé{{ close }} {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}
 </p>
-<p style="text-align:start"><small>{{ open }}{{ EMOJI.steps }} {{ steps_txt }} pas  {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{{ close }}</small></p>
+{% if tasks == 0 and ev_rest == 0 %}
+<p style="text-align:start"><small>{{ open }}✨ Journée terminée !{{ close }}</small></p>
+{% else %}
+<p style="text-align:start"><small>{{ open }}Il te reste{{ close }} {{ join_list(items) }}</small></p>
+{% endif %}
 </b>
 {% endif %}

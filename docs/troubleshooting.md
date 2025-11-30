@@ -7,7 +7,7 @@ Solve the most common problems with your widget.
 ## 🚫 Sensors Don't Appear
 
 ### Symptom
-After HA restart, `sensor.taches_aujourd_hui` and/or `sensor.events_today` don't appear in **Developer Tools > States**.
+After HA restart, `sensor.tasks_today` and/or `sensor.events_today` don't appear in **Developer Tools > States**.
 
 ### Solutions
 
@@ -66,7 +66,7 @@ In widget template, verify names:
 
 ```jinja2
 {% set ENTITIES = {
-  'tasks': 'sensor.taches_aujourd_hui',  # ← Does it exist?
+  'tasks': 'sensor.tasks_today',  # ← Does it exist?
   'steps': 'sensor.thomas_daily_steps',  # ← Does it exist?
   ...
 } %}
@@ -77,7 +77,7 @@ In widget template, verify names:
 - **Developer Tools > Template**
 - Test:
 ```jinja2
-{{ states('sensor.taches_aujourd_hui') }}
+{{ states('sensor.tasks_today') }}
 ```
 - If returns `unknown` or `unavailable` → Sensor not configured correctly
 
@@ -148,7 +148,7 @@ Common errors:
 
 ```jinja2
 {% set ENTITIES = {
-  'tasks': 'sensor.taches_aujourd_hui',  # ← Check exact name
+  'tasks': 'sensor.tasks_today',  # ← Check exact name
   ...
 } %}
 ```
