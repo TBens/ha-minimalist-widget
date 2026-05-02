@@ -17,6 +17,14 @@
 
 **Inspired by [Joi Planner](https://joi.software/)** - An app that I wanted to recreate with my own Home Assistant data!
 
+## ✨ Quick start: use the online generator
+
+The easiest way to get a working widget is the online generator — fill in your sensor names, pick what you want to display, copy the generated code:
+
+**👉 [Open the widget generator](https://tbens.github.io/ha-minimalist-widget/widget-generator.html)**
+
+No coding needed. Toggle each sensor on/off, customize emojis, switch between FR/EN, then paste the result into the Home Assistant Template widget.
+
 ## Features
 
 - ☀️ **Contextual messages** - Different messages based on time of day (morning, afternoon, evening, night)

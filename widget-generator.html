@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HA Minimalist Widget — Générateur</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --panel: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #777777;
+    --line: #e5e5e3;
+    --line-strong: #d4d4d2;
+    --accent-soft: #f0efed;
+    --code-bg: #1a1a1a;
+    --code-ink: #e5e5e3;
+    --code-comment: #888888;
+    --code-keyword: #c084fc;
+    --code-string: #fcd34d;
+    --code-symbol: #93c5fd;
+    --on: #1a1a1a;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; min-width: 0; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; width: 100%; max-width: 100vw; }
+  body {
+    font-family: var(--mono);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 40px 24px 20px;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 24px 64px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 920px) { main { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    header { padding: 24px 16px 12px; }
+    header h1 { font-size: 16px; }
+    header p { font-size: 12px; }
+    main { padding: 8px 12px 40px; gap: 12px; }
+    .panel { padding: 14px; }
+    .panel h2 { font-size: 11px; }
+    .sensor-row { padding: 10px; margin-bottom: 8px; }
+    .sensor-help { font-size: 11px; }
+    pre.code { font-size: 11.5px; padding: 12px; max-height: 40vh; }
+    .preview-time button,
+    .lang-toggle button { padding: 5px 10px; font-size: 12px; }
+    .phone-frame { max-width: 260px; }
+    .phone-screen { padding: 14px 18px 20px; }
+    .phone-spacer { height: 24px; }
+    .phone-widget { font-size: 15px; }
+    .phone-widget small { font-size: 12.5px; }
+    .steps { font-size: 12px; padding: 12px 14px; }
+  }
+  @media (max-width: 380px) {
+    .preview-time button,
+    .lang-toggle button { padding: 4px 8px; font-size: 11.5px; }
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 20px;
+  }
+  .panel h2 {
+    margin: 0 0 14px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 600;
+    font-family: var(--mono);
+  }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  .field .help { color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+  input[type="text"], input[type="color"] {
+    width: 100%;
+    border: 1px solid var(--line-strong);
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: var(--mono);
+    background: #fff;
+    color: var(--ink);
+    transition: border-color .12s;
+  }
+  input[type="text"]:focus, input[type="color"]:focus {
+    outline: none;
+    border-color: var(--ink);
+  }
+  input[type="color"] {
+    height: 36px;
+    padding: 3px;
+    cursor: pointer;
+  }
+  input[disabled] {
+    background: #f5f5f3;
+    color: #bdbdbb;
+    cursor: not-allowed;
+  }
+
+  /* Sensor row */
+  .sensor-row {
+    margin-bottom: 10px;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 12px;
+    background: #fff;
+    transition: border-color .12s;
+  }
+  .sensor-row.active { border-color: var(--line-strong); }
+  .sensor-row.inactive { background: #fafaf9; }
+  .sensor-row.inactive .sensor-input-row,
+  .sensor-row.inactive .sensor-help { display: none; }
+  .sensor-row.inactive .sensor-label { opacity: 0.4; }
+  .sensor-row.inactive .sensor-head { margin-bottom: 0; }
+
+  .sensor-input-row {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+  }
+  input.emoji-input {
+    width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  .sensor-input-row .sensor-input {
+    flex: 1;
+    min-width: 0;
+  }
+  .sensor-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .sensor-label {
+    font-size: 13px;
+    font-weight: 500;
+    flex: 1;
+  }
+  .sensor-help {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  /* Toggle switch — rounded pill */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+    flex-shrink: 0;
+    order: 2;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch-track {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: var(--line-strong);
+    border-radius: 999px;
+    transition: background .12s;
+  }
+  .switch-track::before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .12s;
+  }
+  .switch input:checked + .switch-track { background: var(--on); }
+  .switch input:checked + .switch-track::before { transform: translateX(16px); }
+
+  /* Pill-style toggles (lang + preview-time) */
+  .lang-toggle, .preview-time {
+    display: inline-flex;
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .lang-toggle { margin-bottom: 18px; }
+  .lang-toggle button, .preview-time button {
+    border: 0;
+    background: transparent;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: var(--mono);
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .lang-toggle button.active, .preview-time button.active {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(15,23,42,.08);
+  }
+
+  details {
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  details summary {
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    list-style: none;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+  details summary::before {
+    content: "[+]";
+    display: inline-block;
+    margin-right: 8px;
+    font-family: var(--mono);
+    transition: opacity .1s;
+  }
+  details[open] summary::before { content: "[-]"; }
+
+  /* Output */
+  .output-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .output-head h2 { margin: 0; }
+  .copy-btn {
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: var(--ink);
+    font-size: 12px;
+    font-family: var(--mono);
+    padding: 6px 12px;
+    border-radius: 0;
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: background .12s, border-color .12s;
+  }
+  .copy-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .copy-btn.copied {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  pre.code {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 0;
+    padding: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.55;
+    max-height: 50vh;
+    overflow: auto;
+    white-space: pre;
+    tab-size: 2;
+  }
+  pre.code .c { color: var(--code-comment); font-style: italic; }
+  pre.code .k { color: var(--code-keyword); }
+  pre.code .s { color: var(--code-string); }
+  pre.code .n { color: var(--code-symbol); }
+
+  /* Preview area */
+  .preview-wrap { margin-top: 20px; }
+  .preview-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .preview-head span.label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* Phone mockup — keep rounded since it's a real phone */
+  .phone-frame {
+    width: 100%;
+    max-width: 290px;
+    margin: 0 auto;
+    background: #1f1f1f;
+    border-radius: 38px 38px 0 0;
+    padding: 10px 10px 0;
+  }
+  .phone-screen {
+    background: #000;
+    border-radius: 30px 30px 0 0;
+    padding: 16px 22px 24px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .phone-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #fff;
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .phone-status .icons {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 11px;
+    opacity: 0.95;
+  }
+  .phone-icon { display: inline-block; }
+  .phone-spacer { height: 36px; }
+  .phone-widget { font-size: 16px; font-weight: 700; line-height: 1.42; }
+  .phone-widget p { margin: 0 0 4px; }
+  .phone-widget small { font-size: 13px; font-weight: 600; opacity: 0.95; }
+  .preview-note {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 11px;
+    text-align: center;
+  }
+
+  .steps {
+    margin-top: 16px;
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-radius: 0;
+    padding: 14px 16px;
+    font-size: 12px;
+  }
+  .steps b { color: var(--ink); font-weight: 600; }
+  .steps ol { padding-left: 18px; margin: 8px 0 0; }
+  .steps li { margin-bottom: 4px; }
+
+  .row-emoji { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 data-i18n="headerTitle">HA Minimalist Widget — Générateur</h1>
+  <p data-i18n="headerSub">Active uniquement les infos que tu veux afficher, renseigne tes sensors, copie le code, colle-le dans le widget Template de l'app Home Assistant.</p>
+</header>
+
+<main>
+
+  <!-- ============ Form ============ -->
+  <section class="panel">
+
+    <div class="lang-toggle" role="tablist" aria-label="Langue du widget">
+      <button id="btn-fr" class="active" type="button">Français</button>
+      <button id="btn-en" type="button">English</button>
+    </div>
+
+    <h2 data-i18n="sectionYou">Toi</h2>
+    <div class="field">
+      <label for="f-name" data-i18n="labelName">Prénom</label>
+      <input id="f-name" type="text" value="Thomas" />
+    </div>
+
+    <h2 style="margin-top: 22px;" data-i18n="sectionSensors">Tes infos &amp; sensors Home Assistant</h2>
+    <p style="font-size:12px;color:var(--muted);margin:-6px 0 12px;" data-i18n="sensorsHelp">Active ce que tu veux afficher. Ce qui est désactivé n'apparaîtra ni dans le code ni dans le widget.</p>
+
+    <div class="sensor-row active" id="row-events">
+      <div class="sensor-head">
+        <label class="switch">
+          <input type="checkbox" checked id="t-events" data-row="row-events" data-input="f-events" />
+          <span class="switch-track"></span>
+        </label>
+        <span class="sensor-label" data-i18n="sensorEvents">Évènements du jour</span>
+      </div>
+      <div class="sensor-input-row">
+        <input class="emoji-input" id="e-event" type="text" value="🗓️" maxlength="4" />
+        <input class="sensor-input" id="f-events" type="text" value="sensor.events_today" />
+      </div>
+      <div class="sensor-help" data-i18n="sensorEventsHelp">Sensor template qui compte les évènements restants aujourd'hui.</div>
+    </div>
+
+    <div class="sensor-row active" id="row-tasks">
+      <div class="sensor-head">
+        <label class="switch">
+          <input type="checkbox" checked id="t-tasks" data-row="row-tasks" data-input="f-tasks" />
+          <span class="switch-track"></span>
+        </label>
+        <span class="sensor-label" data-i18n="sensorTasks">Tâches du jour</span>
+      </div>
+      <div class="sensor-input-row">
+        <input class="emoji-input" id="e-task_ok" type="text" value="✅" maxlength="4" data-i18n-attr="emojiTaskOkTip" title="Emoji quand toutes les tâches sont faites" />
+        <input class="emoji-input" id="e-task_many" type="text" value="☑️" maxlength="4" data-i18n-attr="emojiTaskManyTip" title="Emoji quand il reste des tâches" />
+        <input class="sensor-input" id="f-tasks" type="text" value="sensor.tasks_today" />
+      </div>
+    </div>
+
+    <div class="sensor-row active" id="row-sleep">
+      <div class="sensor-head">
+        <label class="switch">
+          <input type="checkbox" checked id="t-sleep" data-row="row-sleep" data-input="f-sleep" />
+          <span class="switch-track"></span>
+        </label>
+        <span class="sensor-label" data-i18n="sensorSleep">Durée de sommeil</span>
+      </div>
+      <div class="sensor-input-row">
+        <input class="emoji-input" id="e-sleep" type="text" value="🌈" maxlength="4" />
+        <input class="sensor-input" id="f-sleep" type="text" value="sensor.your_sleep_duration" />
+      </div>
+    </div>
+
+    <div class="sensor-row active" id="row-steps">
+      <div class="sensor-head">
+        <label class="switch">
+          <input type="checkbox" checked id="t-steps" data-row="row-steps" data-input="f-steps" />
+          <span class="switch-track"></span>
+        </label>
+        <span class="sensor-label" data-i18n="sensorSteps">Pas du jour</span>
+      </div>
+      <div class="sensor-input-row">
+        <input class="emoji-input" id="e-steps" type="text" value="🚶‍♂️" maxlength="6" />
+        <input class="sensor-input" id="f-steps" type="text" value="sensor.your_daily_steps" />
+      </div>
+    </div>
+
+    <div class="sensor-row active" id="row-power">
+      <div class="sensor-head">
+        <label class="switch">
+          <input type="checkbox" checked id="t-power" data-row="row-power" data-input="f-power" />
+          <span class="switch-track"></span>
+        </label>
+        <span class="sensor-label" data-i18n="sensorPower">Consommation électrique</span>
+      </div>
+      <div class="sensor-input-row">
+        <input class="emoji-input" id="e-power" type="text" value="⚡" maxlength="4" />
+        <input class="sensor-input" id="f-power" type="text" value="sensor.your_power_consumption" />
+      </div>
+    </div>
+
+    <div class="sensor-row" id="row-bday">
+      <div class="sensor-head">
+        <label class="switch">
+          <input type="checkbox" id="t-bday" data-row="row-bday" data-input="f-bday" />
+          <span class="switch-track"></span>
+        </label>
+        <span class="sensor-label" data-i18n="sensorBday">Anniversaires (calendrier)</span>
+      </div>
+      <div class="sensor-input-row">
+        <input class="emoji-input" id="e-bday" type="text" value="🎂" maxlength="4" disabled />
+        <input class="sensor-input" id="f-bday" type="text" value="calendar.your_birthdays" disabled />
+      </div>
+    </div>
+
+
+    <details>
+      <summary data-i18n="sectionAdvanced">Avancé</summary>
+      <div class="field">
+        <label for="f-color" data-i18n-html="labelColor">Couleur du texte secondaire <span style="color:var(--muted);font-weight:400;">(atténué, sur fond noir)</span></label>
+        <input id="f-color" type="color" value="#5b5b5b" />
+        <div class="help" data-i18n="helpColor">Concerne les mots non mis en valeur (« Bonjour », « tu as », « aujourd'hui »…). Le prénom et les chiffres restent en blanc.</div>
+      </div>
+      <div class="field">
+        <label for="f-currency" data-i18n="labelCurrency">Devise</label>
+        <input id="f-currency" type="text" value="€" maxlength="4" />
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ Output ============ -->
+  <section class="panel">
+    <div class="output-head">
+      <h2 data-i18n="outputTitle">Code à coller dans le widget</h2>
+      <button id="copy" class="copy-btn" type="button" data-i18n="btnCopy">Copier</button>
+    </div>
+    <pre class="code"><code id="out"></code></pre>
+
+    <div class="preview-wrap">
+      <div class="preview-head">
+        <span class="label" data-i18n="previewLabel">Aperçu (données fictives)</span>
+        <div class="preview-time" role="tablist" aria-label="Moment de la journée">
+          <button data-tod="morning" class="active" type="button" data-i18n="todMorning">Matin</button>
+          <button data-tod="afternoon" type="button" data-i18n="todAfternoon">Aprem</button>
+          <button data-tod="evening" type="button" data-i18n="todEvening">Soir</button>
+          <button data-tod="night" type="button" data-i18n="todNight">Nuit</button>
+        </div>
+      </div>
+
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-status">
+            <span class="phone-time-text">10:24</span>
+            <span class="icons">
+              <span class="phone-icon">▴</span>
+              <span class="phone-icon">▮</span>
+              <span class="phone-icon">100%</span>
+            </span>
+          </div>
+          <div class="phone-spacer"></div>
+          <div class="phone-widget" id="preview-card"></div>
+        </div>
+      </div>
+      <div class="preview-note" data-i18n="previewNote">Le rendu peut varier selon le fond d'écran et la taille du widget.</div>
+    </div>
+
+    <div class="steps">
+      <b data-i18n="stepsTitle">Et après ?</b>
+      <ol id="steps-list" data-i18n-html="stepsList">
+        <li>Clique sur <b>Copier</b>.</li>
+        <li>Sur Android, ajoute le widget <i>Template</i> de l'app Home Assistant à ton écran d'accueil.</li>
+        <li>Colle le code, taille <b>28</b>, thème <b>Transparent</b>, texte <b>White</b>.</li>
+        <li>Vérifie d'abord que les sensors activés existent côté HA (sinon tu verras des zéros ou tirets).</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ============================================================
+  // The Jinja2 logic blocks below extend the original templates
+  // with SHOW_* flags so users can disable any sensor cleanly.
+  // ============================================================
+
+  const LOGIC_FR = `{# ============================
+   🚀 WIDGET LOGIC (do not edit below)
+   ============================ #}
+
+{# Base data — guarded by SHOW_* flags #}
+{% set tasks     = states(ENTITIES.tasks)|int(0) if SHOW_TASKS else 0 %}
+{% set steps     = states(ENTITIES.steps)|int(0) if SHOW_STEPS else 0 %}
+{% set conso     = (states(ENTITIES.conso)|float(0)|round(2)) if SHOW_POWER else 0 %}
+{% set sleep_raw = (states(ENTITIES.sleep)|default('—', true)) if SHOW_SLEEP else '' %}
+{% set ev_rest   = states(EVENTS_SENSOR)|int(0) if SHOW_EVENTS else 0 %}
+
+{# Time #}
+{% set h = now().hour %}
+
+{# Birthdays (optional) #}
+{% set bday = namespace(today=0) %}
+{% if SHOW_BIRTHDAYS %}
+  {% set start_day = as_timestamp(today_at('00:00')) %}
+  {% set end_day   = as_timestamp(today_at('23:59:59')) %}
+  {% for a in BIRTHDAYS %}
+    {% set st = state_attr(a,'start_time') %}
+    {% if st %}
+      {% set ts = as_timestamp(st) %}
+      {% if ts is number and start_day <= ts <= end_day %}
+        {% set bday.today = bday.today + 1 %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{# Helpers #}
+{% set steps_txt = '{:,}'.format(steps) | replace(',', SEP) %}
+{% set open  = '<span style="color:' ~ COLOR ~ ';">' %}
+{% set close = '</span>' %}
+{% macro s(n) %}{{ 's' if n|int(0) > 1 else '' }}{% endmacro %}
+
+{% macro join_list(items) -%}
+  {%- if items|length == 1 -%}
+    {{ items[0] }}
+  {%- elif items|length == 2 -%}
+    {{ items[0] }} {{ open }}et{{ close }} {{ items[1] }}
+  {%- else -%}
+    {%- for item in items -%}
+      {%- if loop.last %} {{ open }}et{{ close }} {{ item }}
+      {%- elif loop.first -%}{{ item }}
+      {%- else -%}, {{ item }}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endmacro %}
+
+{# Build items list #}
+{% set task_emoji = EMOJI.task_ok if tasks == 0 else EMOJI.task_many %}
+{% set ns = namespace(items=[]) %}
+{% if SHOW_EVENTS %}{% set ns.items = ns.items + [EMOJI.event ~ ' ' ~ ev_rest ~ ' évènement' ~ s(ev_rest)] %}{% endif %}
+{% if SHOW_TASKS %}{% set ns.items = ns.items + [task_emoji ~ ' ' ~ tasks ~ ' tâche' ~ s(tasks)] %}{% endif %}
+{% if SHOW_BIRTHDAYS and bday.today > 0 %}{% set ns.items = ns.items + [EMOJI.bday ~ ' ' ~ bday.today ~ ' anniversaire' ~ s(bday.today)] %}{% endif %}
+{% set items = ns.items %}
+
+{# Footer (steps / power) #}
+{% macro footer() -%}
+{%- if SHOW_STEPS or SHOW_POWER -%}
+<p style="text-align:start"><small>{{ open }}
+{%- if SHOW_STEPS %}{{ EMOJI.steps }} {{ steps_txt }} pas{% endif -%}
+{%- if SHOW_STEPS and SHOW_POWER %}  {% endif -%}
+{%- if SHOW_POWER %}{{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{% endif -%}
+{{ close }}</small></p>
+{%- endif -%}
+{%- endmacro %}
+
+{# ===== Variants by time of day ===== #}
+
+{# Morning #}
+{% if 5 <= h < 12 %}
+<b>
+<p style="text-align:start">
+{{ open }}Bonjour{{ close }} {{ NAME }}
+{%- if SHOW_SLEEP %}, {{ open }}tu as dormi{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}{% endif -%}
+{%- if items|length > 0 %}, {{ open }}tu as{{ close }} {{ join_list(items) }} {{ open }}aujourd'hui{{ close }}{% endif %}
+</p>
+{{ footer() }}
+</b>
+
+{# Afternoon #}
+{% elif 12 <= h < 17 %}
+<b>
+<p style="text-align:start">
+{{ open }}Bon après-midi{{ close }} {{ NAME }}
+{%- if items|length > 0 %}, {{ open }}tu as{{ close }} {{ join_list(items) }} {{ open }}aujourd'hui{{ close }}{% endif %}
+</p>
+{{ footer() }}
+</b>
+
+{# Evening #}
+{% elif 17 <= h < 22 %}
+<b>
+<p style="text-align:start">
+{{ open }}Bonsoir{{ close }} {{ NAME }}
+{%- if items|length > 0 %}, {{ open }}tu as{{ close }} {{ join_list(items) }} {{ open }}aujourd'hui{{ close }}{% endif %}
+</p>
+{{ footer() }}
+</b>
+
+{# Night #}
+{% else %}
+<b>
+<p style="text-align:start">
+{{ open }}Bonne nuit{{ close }} {{ NAME }}
+{%- if SHOW_STEPS and SHOW_POWER %}, {{ open }}aujourd'hui tu as fait{{ close }} {{ EMOJI.steps }} {{ steps_txt }} pas {{ open }}et consommé{{ close }} {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}
+{%- elif SHOW_STEPS %}, {{ open }}aujourd'hui tu as fait{{ close }} {{ EMOJI.steps }} {{ steps_txt }} pas
+{%- elif SHOW_POWER %}, {{ open }}aujourd'hui tu as consommé{{ close }} {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}
+{%- endif %}
+</p>
+{% if SHOW_TASKS or SHOW_EVENTS or SHOW_BIRTHDAYS %}
+  {% if tasks == 0 and ev_rest == 0 and bday.today == 0 %}
+<p style="text-align:start"><small>{{ open }}✨ Journée terminée !{{ close }}</small></p>
+  {% else %}
+<p style="text-align:start"><small>{{ open }}Il te reste{{ close }} {{ join_list(items) }}</small></p>
+  {% endif %}
+{% endif %}
+</b>
+{% endif %}`;
+
+  const LOGIC_EN = `{# ============================
+   🚀 WIDGET LOGIC (do not edit below)
+   ============================ #}
+
+{# Base data — guarded by SHOW_* flags #}
+{% set tasks     = states(ENTITIES.tasks)|int(0) if SHOW_TASKS else 0 %}
+{% set steps     = states(ENTITIES.steps)|int(0) if SHOW_STEPS else 0 %}
+{% set conso     = (states(ENTITIES.conso)|float(0)|round(2)) if SHOW_POWER else 0 %}
+{% set sleep_raw = (states(ENTITIES.sleep)|default('—', true)) if SHOW_SLEEP else '' %}
+{% set ev_rest   = states(EVENTS_SENSOR)|int(0) if SHOW_EVENTS else 0 %}
+
+{# Time #}
+{% set h = now().hour %}
+
+{# Birthdays (optional) #}
+{% set bday = namespace(today=0) %}
+{% if SHOW_BIRTHDAYS %}
+  {% set start_day = as_timestamp(today_at('00:00')) %}
+  {% set end_day   = as_timestamp(today_at('23:59:59')) %}
+  {% for a in BIRTHDAYS %}
+    {% set st = state_attr(a,'start_time') %}
+    {% if st %}
+      {% set ts = as_timestamp(st) %}
+      {% if ts is number and start_day <= ts <= end_day %}
+        {% set bday.today = bday.today + 1 %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{# Helpers #}
+{% set steps_txt = '{:,}'.format(steps) | replace(',', SEP) %}
+{% set open  = '<span style="color:' ~ COLOR ~ ';">' %}
+{% set close = '</span>' %}
+{% macro s(n) %}{{ 's' if n|int(0) > 1 else '' }}{% endmacro %}
+
+{% macro join_list(items) -%}
+  {%- if items|length == 1 -%}
+    {{ items[0] }}
+  {%- elif items|length == 2 -%}
+    {{ items[0] }} {{ open }}and{{ close }} {{ items[1] }}
+  {%- else -%}
+    {%- for item in items -%}
+      {%- if loop.last %} {{ open }}and{{ close }} {{ item }}
+      {%- elif loop.first -%}{{ item }}
+      {%- else -%}, {{ item }}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endmacro %}
+
+{# Build items list #}
+{% set task_emoji = EMOJI.task_ok if tasks == 0 else EMOJI.task_many %}
+{% set ns = namespace(items=[]) %}
+{% if SHOW_EVENTS %}{% set ns.items = ns.items + [EMOJI.event ~ ' ' ~ ev_rest ~ ' event' ~ s(ev_rest)] %}{% endif %}
+{% if SHOW_TASKS %}{% set ns.items = ns.items + [task_emoji ~ ' ' ~ tasks ~ ' task' ~ s(tasks)] %}{% endif %}
+{% if SHOW_BIRTHDAYS and bday.today > 0 %}{% set ns.items = ns.items + [EMOJI.bday ~ ' ' ~ bday.today ~ ' birthday' ~ s(bday.today)] %}{% endif %}
+{% set items = ns.items %}
+
+{# Footer (steps / power) #}
+{% macro footer() -%}
+{%- if SHOW_STEPS or SHOW_POWER -%}
+<p style="text-align:start"><small>{{ open }}
+{%- if SHOW_STEPS %}{{ EMOJI.steps }} {{ steps_txt }} steps{% endif -%}
+{%- if SHOW_STEPS and SHOW_POWER %}  {% endif -%}
+{%- if SHOW_POWER %}{{ EMOJI.power }} {{ conso }}{{ CURRENCY }}{% endif -%}
+{{ close }}</small></p>
+{%- endif -%}
+{%- endmacro %}
+
+{# ===== Variants by time of day ===== #}
+
+{# Morning #}
+{% if 5 <= h < 12 %}
+<b>
+<p style="text-align:start">
+{{ open }}Good morning{{ close }} {{ NAME }}
+{%- if SHOW_SLEEP %}, {{ open }}you slept{{ close }} {{ EMOJI.sleep }} {{ sleep_raw }}{% endif -%}
+{%- if items|length > 0 %}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}{% endif %}
+</p>
+{{ footer() }}
+</b>
+
+{# Afternoon #}
+{% elif 12 <= h < 17 %}
+<b>
+<p style="text-align:start">
+{{ open }}Good afternoon{{ close }} {{ NAME }}
+{%- if items|length > 0 %}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}{% endif %}
+</p>
+{{ footer() }}
+</b>
+
+{# Evening #}
+{% elif 17 <= h < 22 %}
+<b>
+<p style="text-align:start">
+{{ open }}Good evening{{ close }} {{ NAME }}
+{%- if items|length > 0 %}, {{ open }}you have{{ close }} {{ join_list(items) }} {{ open }}today{{ close }}{% endif %}
+</p>
+{{ footer() }}
+</b>
+
+{# Night #}
+{% else %}
+<b>
+<p style="text-align:start">
+{{ open }}Good night{{ close }} {{ NAME }}
+{%- if SHOW_STEPS and SHOW_POWER %}, {{ open }}today you did{{ close }} {{ EMOJI.steps }} {{ steps_txt }} steps {{ open }}and consumed{{ close }} {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}
+{%- elif SHOW_STEPS %}, {{ open }}today you did{{ close }} {{ EMOJI.steps }} {{ steps_txt }} steps
+{%- elif SHOW_POWER %}, {{ open }}today you consumed{{ close }} {{ EMOJI.power }} {{ conso }}{{ CURRENCY }}
+{%- endif %}
+</p>
+{% if SHOW_TASKS or SHOW_EVENTS or SHOW_BIRTHDAYS %}
+  {% if tasks == 0 and ev_rest == 0 and bday.today == 0 %}
+<p style="text-align:start"><small>{{ open }}✨ Day completed!{{ close }}</small></p>
+  {% else %}
+<p style="text-align:start"><small>{{ open }}You still have{{ close }} {{ join_list(items) }}</small></p>
+  {% endif %}
+{% endif %}
+</b>
+{% endif %}`;
+
+  // ---------- Helpers ----------
+  function jq(s) { return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+
+  function buildParamsBlock(v) {
+    const events = jq(v.events || 'sensor.events_today');
+    const tasks  = jq(v.tasks  || 'sensor.tasks_today');
+    const steps  = jq(v.steps  || 'sensor.your_daily_steps');
+    const power  = jq(v.power  || 'sensor.your_power_consumption');
+    const sleep  = jq(v.sleep  || 'sensor.your_sleep_duration');
+    const bday   = jq((v.bday || '').trim());
+
+    return `{# ============================
+   🔧 USER PARAMETERS
+   ============================ #}
+
+{% set NAME       = '${jq(v.name)}' %}
+{% set COLOR      = '${jq(v.color)}' %}        {# Secondary text color (muted, on black) #}
+{% set CURRENCY   = '${jq(v.currency)}' %}              {# Currency symbol #}
+{% set USE_24H    = true %}             {# true=24h, false=12h #}
+{% set SEP        = '' %}               {# Thousands separator for numbers #}
+
+{# Toggle each info on/off (true = shown) #}
+{% set SHOW_SLEEP      = ${v.show.sleep} %}
+{% set SHOW_EVENTS     = ${v.show.events} %}
+{% set SHOW_TASKS      = ${v.show.tasks} %}
+{% set SHOW_STEPS      = ${v.show.steps} %}
+{% set SHOW_POWER      = ${v.show.power} %}
+{% set SHOW_BIRTHDAYS  = ${v.show.birthdays} %}
+
+{# Sensor for remaining events today #}
+{% set EVENTS_SENSOR = '${events}' %}
+
+{% set EMOJI = {
+  'sleep': '${jq(v.emoji.sleep)}',
+  'event': '${jq(v.emoji.event)}',
+  'task_ok': '${jq(v.emoji.task_ok)}',
+  'task_many': '${jq(v.emoji.task_many)}',
+  'steps': '${jq(v.emoji.steps)}',
+  'power': '${jq(v.emoji.power)}',
+  'bday': '${jq(v.emoji.bday)}'
+} %}
+
+{# Entities to adapt #}
+{% set ENTITIES = {
+  'tasks': '${tasks}',
+  'steps': '${steps}',
+  'conso': '${power}',
+  'sleep': '${sleep}'
+} %}
+
+{# Birthday calendars (used only if SHOW_BIRTHDAYS = true) #}
+{% set BIRTHDAYS = [${ bday ? `\n  '${bday}'\n` : '' }] %}
+
+`;
+  }
+
+  function getValues() {
+    return {
+      name:     document.getElementById('f-name').value.trim() || 'Friend',
+      color:    document.getElementById('f-color').value || '#5b5b5b',
+      currency: document.getElementById('f-currency').value || '€',
+      events:   document.getElementById('f-events').value.trim(),
+      tasks:    document.getElementById('f-tasks').value.trim(),
+      sleep:    document.getElementById('f-sleep').value.trim(),
+      steps:    document.getElementById('f-steps').value.trim(),
+      power:    document.getElementById('f-power').value.trim(),
+      bday:     document.getElementById('f-bday').value.trim(),
+      show: {
+        events:     document.getElementById('t-events').checked,
+        tasks:      document.getElementById('t-tasks').checked,
+        sleep:      document.getElementById('t-sleep').checked,
+        steps:      document.getElementById('t-steps').checked,
+        power:      document.getElementById('t-power').checked,
+        birthdays:  document.getElementById('t-bday').checked,
+      },
+      emoji: {
+        sleep:     document.getElementById('e-sleep').value || '🌈',
+        event:     document.getElementById('e-event').value || '🗓️',
+        task_ok:   document.getElementById('e-task_ok').value || '✅',
+        task_many: document.getElementById('e-task_many').value || '☑️',
+        steps:     document.getElementById('e-steps').value || '🚶‍♂️',
+        power:     document.getElementById('e-power').value || '⚡',
+        bday:      document.getElementById('e-bday').value || '🎂',
+      },
+    };
+  }
+
+  // ---------- i18n ----------
+  const I18N = {
+    fr: {
+      docTitle: "HA Minimalist Widget — Générateur",
+      headerTitle: "HA Minimalist Widget — Générateur",
+      headerSub: "Active uniquement les infos que tu veux afficher, renseigne tes sensors, copie le code, colle-le dans le widget Template de l'app Home Assistant.",
+      sectionYou: "Toi",
+      labelName: "Prénom",
+      sectionSensors: "Tes infos & sensors Home Assistant",
+      sensorsHelp: "Active ce que tu veux afficher. Ce qui est désactivé n'apparaîtra ni dans le code ni dans le widget.",
+      sensorEvents: "Évènements du jour",
+      sensorEventsHelp: "Sensor template qui compte les évènements restants aujourd'hui.",
+      sensorTasks: "Tâches du jour",
+      sensorSleep: "Durée de sommeil",
+      sensorSteps: "Pas du jour",
+      sensorPower: "Consommation électrique",
+      sensorBday: "Anniversaires (calendrier)",
+      sectionAdvanced: "Avancé",
+      labelColor: 'Couleur du texte secondaire <span style="color:var(--muted);font-weight:400;">(atténué, sur fond noir)</span>',
+      helpColor: "Concerne les mots non mis en valeur (« Bonjour », « tu as », « aujourd'hui »…). Le prénom et les chiffres restent en blanc.",
+      labelCurrency: "Devise",
+      outputTitle: "Code à coller dans le widget",
+      btnCopy: "Copier",
+      btnCopied: "✓ Copié",
+      previewLabel: "Aperçu (données fictives)",
+      todMorning: "Matin",
+      todAfternoon: "Aprem",
+      todEvening: "Soir",
+      todNight: "Nuit",
+      previewNote: "Le rendu peut varier selon le fond d'écran et la taille du widget.",
+      stepsTitle: "Et après ?",
+      stepsList: '<li>Clique sur <b>Copier</b>.</li><li>Sur Android, ajoute le widget <i>Template</i> de l\'app Home Assistant à ton écran d\'accueil.</li><li>Colle le code, taille <b>28</b>, thème <b>Transparent</b>, texte <b>White</b>.</li><li>Vérifie d\'abord que les sensors activés existent côté HA (sinon tu verras des zéros ou tirets).</li>',
+      copyError: "Impossible d'accéder au presse-papier. Sélectionne le code et copie manuellement.",
+      emojiTaskOkTip: "Emoji quand toutes les tâches sont faites",
+      emojiTaskManyTip: "Emoji quand il reste des tâches",
+    },
+    en: {
+      docTitle: "HA Minimalist Widget — Generator",
+      headerTitle: "HA Minimalist Widget — Generator",
+      headerSub: "Toggle on only the info you want to display, fill in your sensors, copy the code, paste it into the Template widget of the Home Assistant app.",
+      sectionYou: "About you",
+      labelName: "First name",
+      sectionSensors: "Your info & Home Assistant sensors",
+      sensorsHelp: "Enable what you want to show. Anything off won't appear in the code or in the widget.",
+      sensorEvents: "Today's events",
+      sensorEventsHelp: "Template sensor counting the remaining events for today.",
+      sensorTasks: "Today's tasks",
+      sensorSleep: "Sleep duration",
+      sensorSteps: "Daily steps",
+      sensorPower: "Power consumption",
+      sensorBday: "Birthdays (calendar)",
+      sectionAdvanced: "Advanced",
+      labelColor: 'Secondary text color <span style="color:var(--muted);font-weight:400;">(muted, on black)</span>',
+      helpColor: 'Applies to non-emphasized words ("Good morning", "you have", "today"…). Your name and numbers stay white.',
+      labelCurrency: "Currency",
+      outputTitle: "Code to paste into the widget",
+      btnCopy: "Copy",
+      btnCopied: "✓ Copied",
+      previewLabel: "Preview (sample data)",
+      todMorning: "Morning",
+      todAfternoon: "Afternoon",
+      todEvening: "Evening",
+      todNight: "Night",
+      previewNote: "Actual rendering may vary depending on your wallpaper and widget size.",
+      stepsTitle: "What's next?",
+      stepsList: '<li>Click <b>Copy</b>.</li><li>On Android, add the Home Assistant <i>Template</i> widget to your home screen.</li><li>Paste the code, size <b>28</b>, <b>Transparent</b> theme, <b>White</b> text.</li><li>First make sure the enabled sensors exist on the HA side (otherwise you\'ll see zeros or dashes).</li>',
+      copyError: "Couldn't access the clipboard. Select the code and copy manually.",
+      emojiTaskOkTip: "Emoji shown when all tasks are done",
+      emojiTaskManyTip: "Emoji shown when tasks are still pending",
+    },
+  };
+
+  function applyI18n() {
+    const dict = I18N[lang];
+    document.documentElement.lang = lang;
+    document.title = dict.docTitle;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.dataset.i18nHtml;
+      if (dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+      const key = el.dataset.i18nAttr;
+      if (dict[key] !== undefined) el.title = dict[key];
+    });
+  }
+
+  let lang = 'fr';
+  let tod = 'morning';
+
+  // ---------- Syntax highlighting ----------
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function highlightJinja(src) {
+    let s = escapeHtml(src);
+    s = s.replace(/\{#[\s\S]*?#\}/g, m => `<span class="c">${m}</span>`);
+    s = s.replace(/'([^'\\]|\\.)*'/g, m => `<span class="s">${m}</span>`);
+    s = s.replace(/(\{%-?\s*)(\w+)/g, (_, p1, kw) => `${p1}<span class="k">${kw}</span>`);
+    s = s.replace(/(\{\{)([^}]*)(\}\})/g, (_, a, b, c) => `<span class="n">${a}</span>${b}<span class="n">${c}</span>`);
+    return s;
+  }
+
+  // ---------- Generation ----------
+  function generate() {
+    const v = getValues();
+    syncSensorRows(v);
+    const code = buildParamsBlock(v) + (lang === 'fr' ? LOGIC_FR : LOGIC_EN);
+    const out = document.getElementById('out');
+    out.innerHTML = highlightJinja(code);
+    out.dataset.raw = code;
+    renderPreview(v);
+  }
+
+  function syncSensorRows(v) {
+    const map = {
+      events: 'row-events', tasks: 'row-tasks', sleep: 'row-sleep',
+      steps:  'row-steps',  power: 'row-power', birthdays: 'row-bday',
+    };
+    Object.entries(v.show).forEach(([key, on]) => {
+      const row = document.getElementById(map[key]);
+      if (!row) return;
+      row.classList.toggle('active', on);
+      row.classList.toggle('inactive', !on);
+      const input = row.querySelector('.sensor-input');
+      if (input) input.disabled = !on;
+    });
+  }
+
+  // ---------- Preview ----------
+  function renderPreview(v) {
+    const sample = { sleep: '7h32', tasks: 3, ev: 2, steps: 8421, conso: 4.32, bday: 0 };
+    const c = v.color || '#5b5b5b';
+    const tag = (txt) => `<span style="color:${c}">${txt}</span>`;
+    const NAME = `<span style="color:#fff">${v.name}</span>`;
+    const E = v.emoji;
+    const CUR = v.currency;
+    const stepsTxt = sample.steps.toString();
+    const isFr = lang === 'fr';
+
+    const pl = (n, fr, en) => isFr ? `${fr}${n>1?'s':''}` : `${en}${n>1?'s':''}`;
+    const taskEmoji = sample.tasks === 0 ? E.task_ok : E.task_many;
+
+    let items = [];
+    if (v.show.events) items.push(`${E.event} ${sample.ev} ${pl(sample.ev,'évènement','event')}`);
+    if (v.show.tasks)  items.push(`${taskEmoji} ${sample.tasks} ${pl(sample.tasks,'tâche','task')}`);
+    if (v.show.birthdays && sample.bday > 0) {
+      items.push(`${E.bday} ${sample.bday} ${pl(sample.bday,'anniversaire','birthday')}`);
+    }
+
+    const andW = isFr ? 'et' : 'and';
+    const joinList = (arr) => {
+      if (arr.length === 0) return '';
+      if (arr.length === 1) return arr[0];
+      if (arr.length === 2) return `${arr[0]} ${tag(andW)} ${arr[1]}`;
+      const last = arr[arr.length-1];
+      return arr.slice(0, -1).join(', ') + ` ${tag(andW)} ${last}`;
+    };
+    const list = joinList(items);
+    const haveItems = items.length > 0;
+    const haveTrack = v.show.tasks || v.show.events || v.show.birthdays;
+
+    const stepsPart = `${E.steps} ${stepsTxt} ${isFr ? 'pas' : 'steps'}`;
+    const powerPart = `${E.power} ${sample.conso}${CUR}`;
+
+    function smallLine() {
+      if (!v.show.steps && !v.show.power) return '';
+      let inner = '';
+      if (v.show.steps) inner += stepsPart;
+      if (v.show.steps && v.show.power) inner += '  ';
+      if (v.show.power) inner += powerPart;
+      return `<p><small>${tag(inner)}</small></p>`;
+    }
+
+    let main = '';
+    if (tod === 'morning') {
+      main = `${tag(isFr ? 'Bonjour' : 'Good morning')} ${NAME}`;
+      if (v.show.sleep) main += `, ${tag(isFr ? 'tu as dormi' : 'you slept')} ${E.sleep} ${sample.sleep}`;
+      if (haveItems) main += `, ${tag(isFr ? 'tu as' : 'you have')} ${list} ${tag(isFr ? "aujourd’hui" : 'today')}`;
+    } else if (tod === 'afternoon') {
+      main = `${tag(isFr ? 'Bon après-midi' : 'Good afternoon')} ${NAME}`;
+      if (haveItems) main += `, ${tag(isFr ? 'tu as' : 'you have')} ${list} ${tag(isFr ? "aujourd’hui" : 'today')}`;
+    } else if (tod === 'evening') {
+      main = `${tag(isFr ? 'Bonsoir' : 'Good evening')} ${NAME}`;
+      if (haveItems) main += `, ${tag(isFr ? 'tu as' : 'you have')} ${list} ${tag(isFr ? "aujourd’hui" : 'today')}`;
+    } else {
+      main = `${tag(isFr ? 'Bonne nuit' : 'Good night')} ${NAME}`;
+      if (v.show.steps && v.show.power) {
+        main += `, ${tag(isFr ? "aujourd’hui tu as fait" : 'today you did')} ${stepsPart} ${tag(isFr ? 'et consommé' : 'and consumed')} ${powerPart}`;
+      } else if (v.show.steps) {
+        main += `, ${tag(isFr ? "aujourd’hui tu as fait" : 'today you did')} ${stepsPart}`;
+      } else if (v.show.power) {
+        main += `, ${tag(isFr ? "aujourd’hui tu as consommé" : 'today you consumed')} ${powerPart}`;
+      }
+    }
+
+    let secondLine = '';
+    if (tod === 'night') {
+      if (haveTrack) {
+        if (haveItems) {
+          secondLine = `<p><small>${tag(isFr ? 'Il te reste' : 'You still have')} ${list}</small></p>`;
+        } else {
+          secondLine = `<p><small>${tag(isFr ? '✨ Journée terminée !' : '✨ Day completed!')}</small></p>`;
+        }
+      }
+    } else {
+      secondLine = smallLine();
+    }
+
+    document.getElementById('preview-card').innerHTML = `<p>${main}</p>${secondLine}`;
+  }
+
+  // ---------- Wiring ----------
+  document.querySelectorAll('input').forEach(el => {
+    el.addEventListener('input', generate);
+    el.addEventListener('change', generate);
+  });
+
+  document.getElementById('btn-fr').addEventListener('click', () => {
+    lang = 'fr';
+    document.getElementById('btn-fr').classList.add('active');
+    document.getElementById('btn-en').classList.remove('active');
+    applyI18n();
+    generate();
+  });
+  document.getElementById('btn-en').addEventListener('click', () => {
+    lang = 'en';
+    document.getElementById('btn-en').classList.add('active');
+    document.getElementById('btn-fr').classList.remove('active');
+    applyI18n();
+    generate();
+  });
+
+  document.querySelectorAll('.preview-time button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tod = btn.dataset.tod;
+      document.querySelectorAll('.preview-time button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      generate();
+    });
+  });
+
+  document.getElementById('copy').addEventListener('click', async () => {
+    const code = document.getElementById('out').dataset.raw || '';
+    try {
+      await navigator.clipboard.writeText(code);
+      const btn = document.getElementById('copy');
+      btn.textContent = I18N[lang].btnCopied;
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = I18N[lang].btnCopy;
+        btn.classList.remove('copied');
+      }, 1800);
+    } catch (e) {
+      alert(I18N[lang].copyError);
+    }
+  });
+
+  // Initial render
+  applyI18n();
+  generate();
+</script>
+
+</body>
+</html>
